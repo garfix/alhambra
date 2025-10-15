@@ -7,11 +7,13 @@ import { run } from './script'
 function App() {
   const [count, setCount] = useState(0)
 
-  run();
+  setTimeout(() => {
+    run();
+  }, 0)
 
   return (
     <>
-      <svg id="view" />
+      <svg id="view" width={520} height={520}/>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
