@@ -30,3 +30,5 @@ Steps
 3. creates symmetries of the basic set to draw the rest
 
 From the basic set, determine for each point how it is calculated.
+
+Based on https://www.youtube.com/watch?v=dxYAKI028YI&list=PLHG5uxhiqH9X3a2ryA4rtvRSP-6zDpsJY&index=1
