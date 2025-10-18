@@ -13,6 +13,14 @@ type Circle = {
     radius: number
 }
 
+// a square on its side
+type Diamond = {
+    top: Point,
+    right: Point,
+    bottom: Point,
+    left: Point
+}
+
 function createHorizontalLines(count: number) {
     const linePieces: LinePiece[] = [];
     const d = 1.0 / count;
@@ -81,7 +89,7 @@ function createSlightDescendingLines() {
     ]
 }
 
-function calculateIntersection(p1: LinePiece, p2: LinePiece): Point {
+function calculatePiecePieceIntersection(p1: LinePiece, p2: LinePiece): Point {
     // p1, p2 define line 1; p3, p4 define line 2
     const x1 = p1.a.x, y1 = p1.a.y;
     const x2 = p1.b.x, y2 = p1.b.y;
@@ -99,6 +107,52 @@ function calculateIntersection(p1: LinePiece, p2: LinePiece): Point {
     return { x: px, y: py };
 }
 
+// Results are ordered by x values
+function calculatePieceCircleIntersections(piece: LinePiece, circle: Circle): Point[] {
+    const { center, radius } = circle;
+    const a = piece.a;
+    const b = piece.b;
+
+    // Direction vector of the line segment
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+
+    // Compute coefficients of the quadratic equation
+    const fx = a.x - center.x;
+    const fy = a.y - center.y;
+
+    const A = dx * dx + dy * dy;
+    const B = 2 * (fx * dx + fy * dy);
+    const C = fx * fx + fy * fy - radius * radius;
+
+    const discriminant = B * B - 4 * A * C;
+
+    // No intersection
+    if (discriminant < 0) {
+        return [];
+    }
+
+    // One or two intersections
+    const results = [];
+    const sqrtD = Math.sqrt(discriminant);
+
+    // Compute t values (parametric position on the line)
+    const t1 = (-B + sqrtD) / (2 * A);
+    const t2 = (-B - sqrtD) / (2 * A);
+
+    // Only count intersections that lie within the segment [0, 1]
+    if (t1 >= 0 && t1 <= 1) {
+        results.push({ x: a.x + t1 * dx, y: a.y + t1 * dy });
+    }
+    if (t2 >= 0 && t2 <= 1 && discriminant !== 0) {
+        results.push({ x: a.x + t2 * dx, y: a.y + t2 * dy });
+    }
+
+    results.sort((a: Point, b: Point) => a.x < b.x ? -1 : 1);
+
+    return results
+}
+
 function calculateDistance(point1: Point, point2: Point) {
     const dx = point2.x - point1.x;
     const dy = point2.y - point1.y;
@@ -106,7 +160,7 @@ function calculateDistance(point1: Point, point2: Point) {
 }
 
 function calculateRadius(piece1: LinePiece, piece2: LinePiece) {
-    const intersectionPoint = calculateIntersection(piece1, piece2);
+    const intersectionPoint = calculatePiecePieceIntersection(piece1, piece2);
     const centerPoint = {x: 2/8, y: 2/8}
 
     return calculateDistance(intersectionPoint, centerPoint);
@@ -121,53 +175,92 @@ function createCircles(radius: number) {
     ]
 }
 
+function createDiamond(circle: Circle, steep: LinePiece, slight: LinePiece): Diamond {
+    const steepPoints = calculatePieceCircleIntersections(steep, circle)
+    const slightPoints = calculatePieceCircleIntersections(slight, circle)
+    return {
+        top: steepPoints[0], 
+        right: slightPoints[1], 
+        bottom: steepPoints[1], 
+        left: slightPoints[0]
+    }
+}
+
+function createSquares(circles: Circle[], steepAscs: LinePiece[], steepDescs: LinePiece[], slightAscs: LinePiece[], slightDescs: LinePiece[]) {
+
+    return [
+        createDiamond(circles[0], steepDescs[1], slightAscs[1]),
+        createDiamond(circles[1], steepAscs[1], slightDescs[1]),
+        createDiamond(circles[2], steepAscs[4], slightDescs[4]),
+        createDiamond(circles[3], steepDescs[4], slightAscs[4]),
+    ]
+}
+
 export function run() {
     const view = document.getElementById('view');
 
     const horizontals = createHorizontalLines(8);
     const verticals = createVerticalLines(8);
-    const steepAscendings = createSteepAscendingLines()
-    const steepDescendings = createSteepDescendingLines()
-    const slightAscendings = createSlightAscendingLines()
-    const slightDescendings = createSlightDescendingLines()
-    const radius = calculateRadius(slightAscendings[0], steepDescendings[2])
+    const steepAscs = createSteepAscendingLines()
+    const steepDescs = createSteepDescendingLines()
+    const slightAscs = createSlightAscendingLines()
+    const slightDescs = createSlightDescendingLines()
+    const radius = calculateRadius(slightAscs[0], steepDescs[2])
     const circles = createCircles(radius)
+    const squares = createSquares(circles, steepAscs, steepDescs, slightAscs, slightDescs)
 
     if (view) {
         drawLinePieces(horizontals, view);
         drawLinePieces(verticals, view);
-        drawLinePieces(steepAscendings, view);
-        drawLinePieces(steepDescendings, view);
-        drawLinePieces(slightAscendings, view);
-        drawLinePieces(slightDescendings, view);
+        drawLinePieces(steepAscs, view);
+        drawLinePieces(steepDescs, view);
+        drawLinePieces(slightAscs, view);
+        drawLinePieces(slightDescs, view);
         drawCircles(circles, view);
+        drawDiamonds(squares, view)
     }
 
 }
 
 function drawLinePieces(linePieces: LinePiece[], view: HTMLElement) {
     for (const piece of linePieces) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", project(piece.a.x));
-        line.setAttribute("y1", project(piece.a.y));
-        line.setAttribute("x2", project(piece.b.x));
-        line.setAttribute("y2", project(piece.b.y));
-        line.setAttribute("stroke", "#000000");
-        line.setAttribute("stroke-width", "1");
-        view.append(line)
+        const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        l.setAttribute("x1", project(piece.a.x));
+        l.setAttribute("y1", project(piece.a.y));
+        l.setAttribute("x2", project(piece.b.x));
+        l.setAttribute("y2", project(piece.b.y));
+        l.setAttribute("stroke", "#000000");
+        l.setAttribute("stroke-width", "1");
+        view.append(l)
     }
 }
 
 function drawCircles(circles: Circle[], view: HTMLElement) {
-    for (const c of circles) {
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("r", project(c.radius, false));
-        circle.setAttribute("cx", project(c.center.x));
-        circle.setAttribute("cy", project(c.center.y));
-        circle.setAttribute("stroke", "#000000");
-        circle.setAttribute("fill", "none");
-        circle.setAttribute("stroke-width", "1");
-        view.append(circle)
+    for (const circle of circles) {
+        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        c.setAttribute("r", project(circle.radius, false));
+        c.setAttribute("cx", project(circle.center.x));
+        c.setAttribute("cy", project(circle.center.y));
+        c.setAttribute("stroke", "#000000");
+        c.setAttribute("fill", "none");
+        c.setAttribute("stroke-width", "1");
+        view.append(c)
+    }
+}
+
+function drawDiamonds(diamonds: Diamond[], view: HTMLElement) {
+    for (const diamond of diamonds) {
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        p.setAttribute("points", [
+            [project(diamond.top.x), project(diamond.top.y)].join(","),
+            [project(diamond.right.x), project(diamond.right.y)].join(","),
+            [project(diamond.bottom.x), project(diamond.bottom.y)].join(","),
+            [project(diamond.left.x), project(diamond.left.y)].join(","),
+        ].join(" "));
+        p.setAttribute("stroke", "#000000");
+        p.setAttribute("fill", "none");
+        p.setAttribute("stroke-width", "1");
+        view.append(p)
     }
 }
 
