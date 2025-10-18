@@ -20,3 +20,7 @@ export type Diamond = {
     bottom: Point,
     left: Point
 }
+
+export type Polygon = {
+    points: Point[];
+}

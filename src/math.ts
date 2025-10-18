@@ -19,7 +19,7 @@ export function calculatePiecePieceIntersection(p1: LinePiece, p2: LinePiece): P
 }
 
 // Results are ordered by x values
-export function calculatePieceCircleIntersections(piece: LinePiece, circle: Circle): Point[] {
+export function calculatePieceCircleIntersections(piece: LinePiece, circle: Circle, sortDir: 'hor'|'ver'): Point[] {
     const { center, radius } = circle;
     const a = piece.a;
     const b = piece.b;
@@ -59,7 +59,11 @@ export function calculatePieceCircleIntersections(piece: LinePiece, circle: Circ
         results.push({ x: a.x + t2 * dx, y: a.y + t2 * dy });
     }
 
-    results.sort((a: Point, b: Point) => a.x < b.x ? -1 : 1);
+    if (sortDir == 'hor') {
+        results.sort((a: Point, b: Point) => a.x < b.x ? -1 : 1);
+    } else {
+        results.sort((a: Point, b: Point) => a.y < b.y ? -1 : 1);
+    }
 
     return results
 }

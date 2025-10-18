@@ -1,6 +1,6 @@
 import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection } from "./math";
-import type { Circle, Diamond, LinePiece } from "./types";
-import { drawCircles, drawDiamonds, drawLinePieces } from "./view";
+import type { Circle, Diamond, LinePiece, Polygon } from "./types";
+import { drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "./view";
 
 function createHorizontalLines(count: number) {
     const linePieces: LinePiece[] = [];
@@ -87,8 +87,8 @@ function createCircles(radius: number) {
 }
 
 function createDiamond(circle: Circle, steep: LinePiece, slight: LinePiece): Diamond {
-    const steepPoints = calculatePieceCircleIntersections(steep, circle)
-    const slightPoints = calculatePieceCircleIntersections(slight, circle)
+    const steepPoints = calculatePieceCircleIntersections(steep, circle, 'ver')
+    const slightPoints = calculatePieceCircleIntersections(slight, circle, 'hor')
     return {
         top: steepPoints[0], 
         right: slightPoints[1], 
@@ -97,7 +97,7 @@ function createDiamond(circle: Circle, steep: LinePiece, slight: LinePiece): Dia
     }
 }
 
-function createSquares(circles: Circle[], steepAscs: LinePiece[], steepDescs: LinePiece[], slightAscs: LinePiece[], slightDescs: LinePiece[]) {
+function createDiamonds(circles: Circle[], steepAscs: LinePiece[], steepDescs: LinePiece[], slightAscs: LinePiece[], slightDescs: LinePiece[]): Diamond[] {
 
     return [
         createDiamond(circles[0], steepDescs[1], slightAscs[1]),
@@ -105,6 +105,26 @@ function createSquares(circles: Circle[], steepAscs: LinePiece[], steepDescs: Li
         createDiamond(circles[2], steepAscs[4], slightDescs[4]),
         createDiamond(circles[3], steepDescs[4], slightAscs[4]),
     ]
+}
+
+function createChevronPolygon(steepAscs: LinePiece[], steepDescs: LinePiece[], slightAscs: LinePiece[], slightDescs: LinePiece[], diamonds: Diamond[]): Polygon {
+    const d1 = diamonds[0];
+    const d2 = diamonds[2];
+
+    return {points: [
+        calculatePiecePieceIntersection(slightAscs[2], steepDescs[0]),
+        calculatePiecePieceIntersection(slightAscs[2], {a: d1.left, b: d1.bottom}),
+        d1.bottom,
+        calculatePiecePieceIntersection(slightAscs[2], {a: d1.bottom, b: d1.right}),
+        calculatePiecePieceIntersection(slightAscs[2], steepDescs[2]),
+        steepDescs[2].b,
+        calculatePiecePieceIntersection(slightDescs[3], steepAscs[5]),
+        calculatePiecePieceIntersection(slightDescs[3], {a: d2.top, b: d2.right}),
+        d2.top,
+        calculatePiecePieceIntersection(slightDescs[3], {a: d2.left, b: d2.top}),
+        calculatePiecePieceIntersection(slightDescs[3], steepAscs[3]),
+        steepDescs[0].b,
+    ]}
 }
 
 export function run() {
@@ -118,7 +138,8 @@ export function run() {
     const slightDescs = createSlightDescendingLines()
     const radius = calculateRadius(slightAscs[0], steepDescs[2])
     const circles = createCircles(radius)
-    const squares = createSquares(circles, steepAscs, steepDescs, slightAscs, slightDescs)
+    const diamonds = createDiamonds(circles, steepAscs, steepDescs, slightAscs, slightDescs)
+    const chevron = createChevronPolygon(steepAscs, steepDescs, slightAscs, slightDescs, diamonds)
 
     if (view) {
         drawLinePieces(horizontals, view);
@@ -128,7 +149,8 @@ export function run() {
         drawLinePieces(slightAscs, view);
         drawLinePieces(slightDescs, view);
         drawCircles(circles, view);
-        drawDiamonds(squares, view)
+        drawDiamonds(diamonds, view);
+        drawPolygon(chevron, view);
     }
 
 }

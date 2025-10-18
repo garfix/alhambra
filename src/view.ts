@@ -1,3 +1,5 @@
+import type { Circle, Diamond, Polygon } from "./types";
+
 export function drawLinePieces(linePieces: LinePiece[], view: HTMLElement) {
     for (const piece of linePieces) {
         const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -40,7 +42,16 @@ export function drawDiamonds(diamonds: Diamond[], view: HTMLElement) {
     }
 }
 
+export function drawPolygon(polygon: Polygon, view: HTMLElement) {
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    p.setAttribute("points", polygon.points.map(p => [project(p.x), project(p.y)].join(",")).join(" "));
+    p.setAttribute("stroke", "#00ff00");
+    p.setAttribute("fill", "none");
+    p.setAttribute("stroke-width", "3");
+    view.append(p)
+}
+
 function project(ordinate: number, useOffset: boolean = true): string {
     const offset = useOffset ? 10 : 0;
-    return "" + (ordinate * 500 + offset)
+    return "" + ((ordinate * 500) + offset)
 }
