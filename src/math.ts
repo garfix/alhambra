@@ -74,9 +74,16 @@ export function calculateDistance(point1: Point, point2: Point) {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+// subtract `base` from all points in poly, to make point the new (0, 0)
+export function normalizePolygon(poly: Polygon, base: Point): Polygon {
+    return {
+        points: poly.points.map((p => { return {x: p.x - base.x, y: p.y - base.y}}))
+    }
+}
+
 export function translatePolygon(poly: Polygon, point: Point): Polygon {
     return {
-        points: poly.points.map((p => { return {x: p.x - point.x, y: p.y - point.y}}))
+        points: poly.points.map((p => { return {x: p.x + point.x, y: p.y + point.y}}))
     }
 }
 

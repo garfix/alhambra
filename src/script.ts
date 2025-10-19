@@ -1,4 +1,4 @@
-import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, rotatePolygon, translatePolygon } from "./math";
+import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, normalizePolygon, rotatePolygon, translatePolygon } from "./math";
 import type { Circle, Diamond, LinePiece, Polygon } from "./types";
 import { clearView, drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "./view";
 
@@ -127,7 +127,7 @@ function createChevronPolygon(steepAscs: LinePiece[], steepDescs: LinePiece[], s
     ]}
 }
 
-function designShapes(view: HTMLElement, draw: boolean): Record<string, Polygon> {
+function designShapes(view: SVGSVGElement, draw: boolean): Record<string, Polygon> {
 
     const rawPivot = {x:2/8, y:6/8};
 
@@ -141,7 +141,7 @@ function designShapes(view: HTMLElement, draw: boolean): Record<string, Polygon>
     const circles = createCircles(radius)
     const diamonds = createDiamonds(circles, steepAscs, steepDescs, slightAscs, slightDescs)
     const chevron = createChevronPolygon(steepAscs, steepDescs, slightAscs, slightDescs, diamonds)
-    const normalizedChevron = translatePolygon(chevron, rawPivot)
+    const normalizedChevron = normalizePolygon(chevron, rawPivot)
 
     if (draw) {
         clearView(view, '#f0f0f0')
@@ -173,12 +173,12 @@ function designShapes(view: HTMLElement, draw: boolean): Record<string, Polygon>
 export function run() {
     const view = document.getElementById('view');
 
-    if (view) {
+    if (view instanceof SVGSVGElement) {
         const shapes = designShapes(view, true)
         
         clearView(view, '#f1ebdf');
-        for (const [key, shape] of Object.entries(shapes)) {
-            const translated = translatePolygon(shape, {x: -0.5, y: -0.5})
+        for (const [_, shape] of Object.entries(shapes)) {
+            const translated = translatePolygon(shape, {x: 0.5, y: 0.5})
             drawPolygon(translated, view, '#996e0a', 'black')
         }
         

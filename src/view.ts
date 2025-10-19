@@ -1,6 +1,6 @@
-import type { Circle, Diamond, Polygon } from "./types";
+import type { Circle, Diamond, LinePiece, Polygon } from "./types";
 
-export function drawLinePieces(linePieces: LinePiece[], view: HTMLElement) {
+export function drawLinePieces(linePieces: LinePiece[], view: SVGSVGElement) {
     for (const piece of linePieces) {
         const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
         l.setAttribute("x1", project(piece.a.x));
@@ -13,7 +13,7 @@ export function drawLinePieces(linePieces: LinePiece[], view: HTMLElement) {
     }
 }
 
-export function drawCircles(circles: Circle[], view: HTMLElement) {
+export function drawCircles(circles: Circle[], view: SVGSVGElement) {
     for (const circle of circles) {
         const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         c.setAttribute("r", project(circle.radius, false));
@@ -26,7 +26,7 @@ export function drawCircles(circles: Circle[], view: HTMLElement) {
     }
 }
 
-export function drawDiamonds(diamonds: Diamond[], view: HTMLElement) {
+export function drawDiamonds(diamonds: Diamond[], view: SVGSVGElement) {
     for (const diamond of diamonds) {
         const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
         p.setAttribute("points", [
@@ -42,7 +42,7 @@ export function drawDiamonds(diamonds: Diamond[], view: HTMLElement) {
     }
 }
 
-export function drawPolygon(polygon: Polygon, view: HTMLElement, fillColor: string = 'none', strokeColor = '#00ff00') {
+export function drawPolygon(polygon: Polygon, view: SVGSVGElement, fillColor: string = 'none', strokeColor = '#00ff00') {
     const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     p.setAttribute("points", polygon.points.map(p => [project(p.x), project(p.y)].join(",")).join(" "));
     p.setAttribute("stroke", strokeColor);
@@ -51,7 +51,7 @@ export function drawPolygon(polygon: Polygon, view: HTMLElement, fillColor: stri
     view.append(p)
 }
 
-export function clearView(view: HTMLElement|SVGElement, color: string) {
+export function clearView(view: SVGSVGElement, color: string) {
     const w = view.viewBox.baseVal.width || view.clientWidth || view.getAttribute('width');
     const h = view.viewBox.baseVal.height || view.clientHeight || view.getAttribute('height');
 
@@ -62,8 +62,8 @@ export function clearView(view: HTMLElement|SVGElement, color: string) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     rect.setAttribute('x', '0');
     rect.setAttribute('y', '0');
-    rect.setAttribute('width', w);
-    rect.setAttribute('height', h);
+    rect.setAttribute('width', ""+w);
+    rect.setAttribute('height', ""+h);
     rect.setAttribute('fill', color);
     view.appendChild(rect);
 }
