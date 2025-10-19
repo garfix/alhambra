@@ -1,6 +1,6 @@
-import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection } from "./math";
+import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, rotatePolygon, translatePolygon } from "./math";
 import type { Circle, Diamond, LinePiece, Polygon } from "./types";
-import { drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "./view";
+import { clearView, drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "./view";
 
 function createHorizontalLines(count: number) {
     const linePieces: LinePiece[] = [];
@@ -127,8 +127,9 @@ function createChevronPolygon(steepAscs: LinePiece[], steepDescs: LinePiece[], s
     ]}
 }
 
-export function run() {
-    const view = document.getElementById('view');
+function designShapes(view: HTMLElement, draw: boolean): Record<string, Polygon> {
+
+    const rawPivot = {x:2/8, y:6/8};
 
     const horizontals = createHorizontalLines(8);
     const verticals = createVerticalLines(8);
@@ -140,8 +141,10 @@ export function run() {
     const circles = createCircles(radius)
     const diamonds = createDiamonds(circles, steepAscs, steepDescs, slightAscs, slightDescs)
     const chevron = createChevronPolygon(steepAscs, steepDescs, slightAscs, slightDescs, diamonds)
+    const normalizedChevron = translatePolygon(chevron, rawPivot)
 
-    if (view) {
+    if (draw) {
+        clearView(view, '#f0f0f0')
         drawLinePieces(horizontals, view);
         drawLinePieces(verticals, view);
         drawLinePieces(steepAscs, view);
@@ -153,5 +156,33 @@ export function run() {
         drawPolygon(chevron, view);
     }
 
+    const pivot = {x: 0, y: 0};
+    const upChevron = normalizedChevron
+    const rightChevron = rotatePolygon(normalizedChevron, Math.PI / 2, pivot)
+    const downChevron = rotatePolygon(normalizedChevron, Math.PI, pivot)
+    const leftChevron = rotatePolygon(normalizedChevron, -Math.PI / 2, pivot)
+
+    return {
+        up: upChevron,
+        right: rightChevron,
+        down: downChevron,
+        left: leftChevron
+    }
 }
 
+export function run() {
+    const view = document.getElementById('view');
+
+    if (view) {
+        const shapes = designShapes(view, true)
+        
+        clearView(view, '#f1ebdf');
+        for (const [key, shape] of Object.entries(shapes)) {
+            const translated = translatePolygon(shape, {x: -0.5, y: -0.5})
+            drawPolygon(translated, view, '#996e0a', 'black')
+        }
+        
+    } else {
+        throw new Error("HTML element not found: view");
+    }
+}

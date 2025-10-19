@@ -1,4 +1,4 @@
-import type { Circle, LinePiece, Point } from "./types";
+import type { Circle, LinePiece, Point, Polygon } from "./types";
 
 export function calculatePiecePieceIntersection(p1: LinePiece, p2: LinePiece): Point {
     // p1, p2 define line 1; p3, p4 define line 2
@@ -72,4 +72,33 @@ export function calculateDistance(point1: Point, point2: Point) {
     const dx = point2.x - point1.x;
     const dy = point2.y - point1.y;
     return Math.sqrt(dx * dx + dy * dy);
+}
+
+export function translatePolygon(poly: Polygon, point: Point): Polygon {
+    return {
+        points: poly.points.map((p => { return {x: p.x - point.x, y: p.y - point.y}}))
+    }
+}
+
+export function rotatePolygon(polygon: Polygon, angle: number, pivot: Point) {
+    const sinA = Math.sin(angle);
+    const cosA = Math.cos(angle);
+
+    const rotatedPoints = polygon.points.map((p) => {
+        // Translate point to origin relative to pivot
+        const dx = p.x - pivot.x;
+        const dy = p.y - pivot.y;
+
+        // Apply rotation matrix
+        const xNew = dx * cosA - dy * sinA;
+        const yNew = dx * sinA + dy * cosA;
+
+        // Translate back
+        return {
+            x: xNew + pivot.x,
+            y: yNew + pivot.y,
+        };
+    });
+
+    return { points: rotatedPoints };
 }

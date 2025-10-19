@@ -42,13 +42,30 @@ export function drawDiamonds(diamonds: Diamond[], view: HTMLElement) {
     }
 }
 
-export function drawPolygon(polygon: Polygon, view: HTMLElement) {
+export function drawPolygon(polygon: Polygon, view: HTMLElement, fillColor: string = 'none', strokeColor = '#00ff00') {
     const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     p.setAttribute("points", polygon.points.map(p => [project(p.x), project(p.y)].join(",")).join(" "));
-    p.setAttribute("stroke", "#00ff00");
-    p.setAttribute("fill", "none");
+    p.setAttribute("stroke", strokeColor);
+    p.setAttribute("fill", fillColor);
     p.setAttribute("stroke-width", "3");
     view.append(p)
+}
+
+export function clearView(view: HTMLElement|SVGElement, color: string) {
+    const w = view.viewBox.baseVal.width || view.clientWidth || view.getAttribute('width');
+    const h = view.viewBox.baseVal.height || view.clientHeight || view.getAttribute('height');
+
+    // wipe contents
+    view.innerHTML = '';
+
+    // create background rect covering the SVG coordinate system
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', '0');
+    rect.setAttribute('y', '0');
+    rect.setAttribute('width', w);
+    rect.setAttribute('height', h);
+    rect.setAttribute('fill', color);
+    view.appendChild(rect);
 }
 
 function project(ordinate: number, useOffset: boolean = true): string {
