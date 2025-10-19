@@ -70,5 +70,5 @@ export function clearView(view: SVGSVGElement, color: string) {
 
 function project(ordinate: number, useOffset: boolean = true): string {
     const offset = useOffset ? 10 : 0;
-    return "" + ((ordinate * 500) + offset)
+    return "" + ((ordinate * 200) + offset)
 }
