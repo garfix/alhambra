@@ -22,6 +22,7 @@ export function drawCircles(circles: Circle[], view: SVGSVGElement) {
         c.setAttribute("stroke", "#000000");
         c.setAttribute("fill", "none");
         c.setAttribute("stroke-width", "1");
+        c.setAttribute("filter", "url(#filter)");
         view.append(c)
     }
 }
@@ -43,11 +44,12 @@ export function drawDiamonds(diamonds: Diamond[], view: SVGSVGElement) {
 }
 
 export function drawPolygon(polygon: Polygon, view: SVGSVGElement, fillColor: string = 'none', strokeColor = '#00ff00') {
+
     const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     p.setAttribute("points", polygon.points.map(p => [project(p.x), project(p.y)].join(",")).join(" "));
     p.setAttribute("stroke", strokeColor);
     p.setAttribute("fill", fillColor);
-    p.setAttribute("stroke-width", "3");
+    p.setAttribute("stroke-width", "1");
     view.append(p)
 }
 
@@ -56,7 +58,7 @@ export function clearView(view: SVGSVGElement, color: string) {
     const h = view.viewBox.baseVal.height || view.clientHeight || view.getAttribute('height');
 
     // wipe contents
-    view.innerHTML = '';
+    // view.innerHTML = '';
 
     // create background rect covering the SVG coordinate system
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
