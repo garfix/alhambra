@@ -1,4 +1,4 @@
-import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, normalizePolygon, rotatePolygon } from "../lib/math";
+import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, normalizePolygon, rotatePolygon, translatePolygon } from "../lib/math";
 import type { Circle, Diamond, LinePiece, Polygon } from "../lib/types";
 import { clearView, drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "../lib/view";
 
@@ -167,5 +167,25 @@ export function designShapes(view: SVGSVGElement, draw: boolean): Record<string,
         right: rightChevron,
         down: downChevron,
         left: leftChevron
+    }
+}
+
+export function drawPattern(shapes: Record<string, Polygon>, g: SVGElement) {
+
+    const colors = ['#996e0a', '#285574', '#000000', '#13563d'];
+
+    let startIndex = 0;
+    for (let y = 0; y < 10; y++) {
+        for (let x = 0; x < 10; x++) {
+            const dx = (x * 1) + ((y % 2) * 0.5);
+            const dy = y * 0.5;
+            let colorIndex = (startIndex + x) % colors.length;
+            for (const [_, shape] of Object.entries(shapes)) {
+                const translated = translatePolygon(shape, {x: dx, y: dy})
+                drawPolygon(translated, g, colors[colorIndex], 'grey')
+            }
+            colorIndex++;
+        }
+        startIndex += (y % 2) == 0 ? 2 : 1;
     }
 }
