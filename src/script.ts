@@ -1,8 +1,8 @@
 import { moveLight, moveLightWithMouse } from "./animation";
-import { translatePolygon } from "./math";
+import { translatePolygon } from "./lib/math";
 import { designShapes } from "./patterns/pattern1";
-import type { Polygon } from "./types";
-import { clearView, drawPolygon } from "./view";
+import type { Polygon } from "./lib/types";
+import { clearView, drawPolygon } from "./lib/view";
 
 export function run() {
     const view = document.getElementById('view');

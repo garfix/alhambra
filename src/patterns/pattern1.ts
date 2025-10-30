@@ -1,6 +1,6 @@
-import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, normalizePolygon, rotatePolygon } from "../math";
-import type { Circle, Diamond, LinePiece, Polygon } from "../types";
-import { clearView, drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "../view";
+import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, normalizePolygon, rotatePolygon } from "../lib/math";
+import type { Circle, Diamond, LinePiece, Polygon } from "../lib/types";
+import { clearView, drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "../lib/view";
 
 function createHorizontalLines(count: number) {
     const linePieces: LinePiece[] = [];

@@ -1,34 +1,14 @@
-Groups of points: A, B, C
-Each group is a 2D of matrix of points, for easier comprehension.
+This project celebrates the wonderful patterns of the Alhambra. These patterns are calculated with JavaScript and drawn using SVG in the browser. 
 
-    A B C
-    D E F
-    G H I
+This was made possible by the analytical work of Manuel Martinez Vela. See his [YouTube channel](https://www.youtube.com/playlist?list=PLHG5uxhiqH9X3a2ryA4rtvRSP-6zDpsJY)
 
-To draw group C, use set A and B
+To draw a pattern we first need to calculate the points of the basic shapes. Then we copy, move and rotate these shapes, color them, and put them in their position. A shape is simply a polygon. Several shapes together form a pattern unit. The pattern itself is formed by filling up a space with pattern units.
 
-Draw polygons based on the groups of points.
+## The "design" phase
 
-Each coordinate is a combination of 2 numbers, each in the range [0.0, 1.0].
+In this phase we draw line pieces, circles, and squares to help us find coordinates. These elements are also drawn on the canvas so that we can visually inspect the work for errors. We calculate intersections between them to find the points of the basic shapes. The product of this phase is a basic set of named polygons. The coordinates of the points of the shapes lie in the range [0.0 ... 1.0, 0.0 ... 1.0].
 
-Symmetrieen: 
-- rotationeel
-- spiegel
+## The drawing phase
 
-Give every coordinate found a distinct label. Shapes (polygons) are formed by making a list of labels.
+When drawing the shapes, they are colored, multiplied, rotated, and moved into place.
 
-Lines may be drawn on top of polygons, possibly overlapping them.
-
-Draw each shape and line-piece only once. Then use symmetry to draw the others.
-
-Question: is it possible to draw a line piece without borders at the end pieces?
-
-Steps
-
-1. pick a minimal set of polygons and line pieces that contains no inner symmetry (basic set)
-2. draw the basic set
-3. creates symmetries of the basic set to draw the rest
-
-From the basic set, determine for each point how it is calculated.
-
-Based on https://www.youtube.com/watch?v=dxYAKI028YI&list=PLHG5uxhiqH9X3a2ryA4rtvRSP-6zDpsJY&index=1
