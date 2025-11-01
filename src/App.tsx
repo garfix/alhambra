@@ -19,6 +19,7 @@ function App() {
             <feComposite in = "SourceGraphic" in2 = "light" operator = "arithmetic" k1 ="0" k2 ="1" k3 ="1" k4 ="0" />
           </filter>
         </defs>
+        <g id="background"/>
         <g id="group1" filter="url(#filter)" />
       </svg>
     </>

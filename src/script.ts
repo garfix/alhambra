@@ -5,23 +5,26 @@ import { clearView } from "./lib/view";
 export function run() {
     const view = document.getElementById('view');
     const light = document.getElementById('light1')
-    const g = document.getElementById("group1");
+    const mainGroup = document.getElementById("group1");
+    const background = document.getElementById("background");
 
-    if (view instanceof SVGSVGElement) {
-        const shapes = designShapes(view, true)
+    const BG_COLOR = '#f0f0f0';
 
-        clearView(view, '#f1ebdf');
+    if (view instanceof SVGSVGElement && mainGroup instanceof SVGGElement && background instanceof SVGGElement) {
 
-        g.setAttribute("filter", "url(#filter)");
-        view.append(g)
+        clearView(view, background, mainGroup, BG_COLOR)
 
-        drawPattern(shapes, g)
+        const shapes = designShapes(mainGroup, true)
+
+        clearView(view, background, mainGroup, BG_COLOR);
+
+        drawPattern(shapes, mainGroup)
 
         moveLight(light, true)
         moveLightWithMouse(light, view)
                 
     } else {
-        throw new Error("HTML element not found: view");
+        throw new Error("HTML elements not found");
     }
 }
 

@@ -1,6 +1,6 @@
 import { calculateDistance, calculatePieceCircleIntersections, calculatePiecePieceIntersection, normalizePolygon, rotatePolygon, translatePolygon } from "../lib/math";
 import type { Circle, Diamond, LinePiece, Polygon } from "../lib/types";
-import { clearView, drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "../lib/view";
+import { drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "../lib/view";
 
 function createHorizontalLines(count: number) {
     const linePieces: LinePiece[] = [];
@@ -127,7 +127,7 @@ function createChevronPolygon(steepAscs: LinePiece[], steepDescs: LinePiece[], s
     ]}
 }
 
-export function designShapes(view: SVGSVGElement, draw: boolean): Record<string, Polygon> {
+export function designShapes(g: SVGGElement, draw: boolean): Record<string, Polygon> {
 
     const rawPivot = {x:2/8, y:6/8};
 
@@ -144,16 +144,15 @@ export function designShapes(view: SVGSVGElement, draw: boolean): Record<string,
     const normalizedChevron = normalizePolygon(chevron, rawPivot)
 
     if (draw) {
-        clearView(view, '#f0f0f0')
-        drawLinePieces(horizontals, view);
-        drawLinePieces(verticals, view);
-        drawLinePieces(steepAscs, view);
-        drawLinePieces(steepDescs, view);
-        drawLinePieces(slightAscs, view);
-        drawLinePieces(slightDescs, view);
-        drawCircles(circles, view);
-        drawDiamonds(diamonds, view);
-        drawPolygon(chevron, view);
+        drawLinePieces(horizontals, g);
+        drawLinePieces(verticals, g);
+        drawLinePieces(steepAscs, g);
+        drawLinePieces(steepDescs, g);
+        drawLinePieces(slightAscs, g);
+        drawLinePieces(slightDescs, g);
+        drawCircles(circles, g);
+        drawDiamonds(diamonds, g);
+        drawPolygon(chevron, g);
     }
 
     const pivot = {x: 0, y: 0};
@@ -170,7 +169,7 @@ export function designShapes(view: SVGSVGElement, draw: boolean): Record<string,
     }
 }
 
-export function drawPattern(shapes: Record<string, Polygon>, g: SVGElement) {
+export function drawPattern(shapes: Record<string, Polygon>, g: SVGGElement) {
 
     const colors = ['#996e0a', '#285574', '#000000', '#13563d'];
 
