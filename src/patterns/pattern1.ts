@@ -165,10 +165,10 @@ export function designShapes(g: SVGGElement, draw: boolean): Record<string, Poly
     const project = (ordinate: number, type: CoordinateType) => {
         switch (type) {
             case "abs":
-                return ordinate * 200;
+                return ordinate * 500;
             case "x":
             case "y":
-                return 10 + ordinate * 200;
+                return 10 + ordinate * 500;
         }
     };
 

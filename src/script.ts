@@ -14,9 +14,9 @@ export function run() {
     if (view instanceof SVGSVGElement && mainGroup instanceof SVGGElement && background instanceof SVGGElement) {
         clearView(view, background, mainGroup, BG_COLOR);
 
-        const shapes = designShapes(mainGroup, true);
+        const shapes = designShapes2(mainGroup, true);
 
-        // return;
+        return;
 
         clearView(view, background, mainGroup, BG_COLOR);
 
