@@ -9,7 +9,7 @@ export function drawLinePieces(linePieces: LinePiece[], g: SVGGElement) {
         l.setAttribute("y2", project(piece.b.y));
         l.setAttribute("stroke", "#000000");
         l.setAttribute("stroke-width", "1");
-        g.append(l)
+        g.append(l);
     }
 }
 
@@ -23,55 +23,57 @@ export function drawCircles(circles: Circle[], g: SVGGElement) {
         c.setAttribute("fill", "none");
         c.setAttribute("stroke-width", "1");
         c.setAttribute("filter", "url(#filter)");
-        g.append(c)
+        g.append(c);
     }
 }
 
 export function drawDiamonds(diamonds: Diamond[], g: SVGGElement) {
     for (const diamond of diamonds) {
         const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-        p.setAttribute("points", [
-            [project(diamond.top.x), project(diamond.top.y)].join(","),
-            [project(diamond.right.x), project(diamond.right.y)].join(","),
-            [project(diamond.bottom.x), project(diamond.bottom.y)].join(","),
-            [project(diamond.left.x), project(diamond.left.y)].join(","),
-        ].join(" "));
+        p.setAttribute(
+            "points",
+            [
+                [project(diamond.top.x), project(diamond.top.y)].join(","),
+                [project(diamond.right.x), project(diamond.right.y)].join(","),
+                [project(diamond.bottom.x), project(diamond.bottom.y)].join(","),
+                [project(diamond.left.x), project(diamond.left.y)].join(","),
+            ].join(" ")
+        );
         p.setAttribute("stroke", "#000000");
         p.setAttribute("fill", "none");
         p.setAttribute("stroke-width", "1");
-        g.append(p)
+        g.append(p);
     }
 }
 
-export function drawPolygon(polygon: Polygon, g: SVGGElement, fillColor: string = 'none', strokeColor = '#00ff00') {
-
+export function drawPolygon(polygon: Polygon, g: SVGGElement, fillColor: string = "none", strokeColor = "#00ff00") {
     const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    p.setAttribute("points", polygon.points.map(p => [project(p.x), project(p.y)].join(",")).join(" "));
+    p.setAttribute("points", polygon.points.map((p) => [project(p.x), project(p.y)].join(",")).join(" "));
     p.setAttribute("stroke", strokeColor);
     p.setAttribute("fill", fillColor);
     p.setAttribute("stroke-width", "1");
-    g.append(p)
+    g.append(p);
 }
 
 export function clearView(view: SVGSVGElement, background: SVGGElement, g: SVGGElement, color: string) {
-    const w = view.viewBox.baseVal.width || view.clientWidth || view.getAttribute('width');
-    const h = view.viewBox.baseVal.height || view.clientHeight || view.getAttribute('height');
+    const w = view.viewBox.baseVal.width || view.clientWidth || view.getAttribute("width");
+    const h = view.viewBox.baseVal.height || view.clientHeight || view.getAttribute("height");
 
     // wipe contents
-    g.innerHTML = '';
-    background.innerHTML = '';
+    g.innerHTML = "";
+    background.innerHTML = "";
 
     // create background rect covering the SVG coordinate system
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('x', '0');
-    rect.setAttribute('y', '0');
-    rect.setAttribute('width', ""+w);
-    rect.setAttribute('height', ""+h);
-    rect.setAttribute('fill', color);
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", "0");
+    rect.setAttribute("width", "" + w);
+    rect.setAttribute("height", "" + h);
+    rect.setAttribute("fill", color);
     background.appendChild(rect);
 }
 
 function project(ordinate: number, useOffset: boolean = true): string {
     const offset = useOffset ? 10 : 0;
-    return "" + ((ordinate * 200) + offset)
+    return "" + (ordinate * 200 + offset);
 }

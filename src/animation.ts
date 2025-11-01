@@ -1,6 +1,5 @@
-export function moveLight(light, ltr) {   
-
-    let newX = parseInt(light.getAttribute('x'))
+export function moveLight(light: SVGFESpecularLightingElement, ltr: boolean) {
+    let newX = parseInt(light.getAttribute("x") as string);
 
     if (ltr) {
         newX += 1;
@@ -9,21 +8,21 @@ export function moveLight(light, ltr) {
     }
 
     if (ltr && newX > 510) {
-        newX = 510
-        ltr = false
+        newX = 510;
+        ltr = false;
     } else if (!ltr && newX < 10) {
-        newX = 10
-        ltr = true
+        newX = 10;
+        ltr = true;
     }
-    
-    light.setAttribute('x', newX)
 
-    requestAnimationFrame(() => { 
-        moveLight(light, ltr)
-    })
+    light.setAttribute("x", "" + newX);
+
+    requestAnimationFrame(() => {
+        moveLight(light, ltr);
+    });
 }
 
-export function moveLightWithMouse(light, view) {
+export function moveLightWithMouse(light: SVGFESpecularLightingElement, view: SVGSVGElement) {
     view.addEventListener("mousemove", (e) => {
         const rect = view.getBoundingClientRect();
         const x = e.clientX - rect.left;
