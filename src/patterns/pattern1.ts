@@ -6,7 +6,7 @@ import {
     rotatePolygon,
     translatePolygon,
 } from "../lib/math";
-import type { Circle, Diamond, LinePiece, Polygon } from "../lib/types";
+import type { Circle, CoordinateType, Diamond, LinePiece, Polygon } from "../lib/types";
 import { drawCircles, drawDiamonds, drawLinePieces, drawPolygon } from "../lib/view";
 
 function createHorizontalLines(count: number) {
@@ -162,16 +162,26 @@ export function designShapes(g: SVGGElement, draw: boolean): Record<string, Poly
     const chevron = createChevronPolygon(steepAscs, steepDescs, slightAscs, slightDescs, diamonds);
     const normalizedChevron = normalizePolygon(chevron, rawPivot);
 
+    const project = (ordinate: number, type: CoordinateType) => {
+        switch (type) {
+            case "abs":
+                return ordinate * 200;
+            case "x":
+            case "y":
+                return 10 + ordinate * 200;
+        }
+    };
+
     if (draw) {
-        drawLinePieces(horizontals, g);
-        drawLinePieces(verticals, g);
-        drawLinePieces(steepAscs, g);
-        drawLinePieces(steepDescs, g);
-        drawLinePieces(slightAscs, g);
-        drawLinePieces(slightDescs, g);
-        drawCircles(circles, g);
-        drawDiamonds(diamonds, g);
-        drawPolygon(chevron, g);
+        drawLinePieces(horizontals, g, project);
+        drawLinePieces(verticals, g, project);
+        drawLinePieces(steepAscs, g, project);
+        drawLinePieces(steepDescs, g, project);
+        drawLinePieces(slightAscs, g, project);
+        drawLinePieces(slightDescs, g, project);
+        drawCircles(circles, g, project);
+        drawDiamonds(diamonds, g, project);
+        drawPolygon(chevron, g, project);
     }
 
     const pivot = { x: 0, y: 0 };
@@ -191,6 +201,16 @@ export function designShapes(g: SVGGElement, draw: boolean): Record<string, Poly
 export function drawPattern(shapes: Record<string, Polygon>, g: SVGGElement) {
     const colors = ["#996e0a", "#285574", "#000000", "#13563d"];
 
+    const project = (ordinate: number, type: CoordinateType) => {
+        switch (type) {
+            case "abs":
+                return ordinate * 200;
+            case "x":
+            case "y":
+                return 10 + ordinate * 200;
+        }
+    };
+
     let startIndex = 0;
     for (let y = 0; y < 10; y++) {
         for (let x = 0; x < 10; x++) {
@@ -199,7 +219,7 @@ export function drawPattern(shapes: Record<string, Polygon>, g: SVGGElement) {
             let colorIndex = (startIndex + x) % colors.length;
             for (const [_, shape] of Object.entries(shapes)) {
                 const translated = translatePolygon(shape, { x: dx, y: dy });
-                drawPolygon(translated, g, colors[colorIndex], "grey");
+                drawPolygon(translated, g, project, colors[colorIndex], "grey");
             }
             colorIndex++;
         }

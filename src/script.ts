@@ -1,7 +1,7 @@
 import { moveLight, moveLightWithMouse } from "./animation";
 import { designShapes, drawPattern } from "./patterns/pattern1";
 import { clearView } from "./lib/view";
-import { designShapes1 } from "./patterns/pattern2";
+import { designShapes2 } from "./patterns/pattern2";
 
 export function run() {
     const view = document.getElementById("view");

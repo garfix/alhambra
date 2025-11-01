@@ -1,4 +1,4 @@
-This project celebrates the wonderful patterns of the Alhambra. These patterns are calculated with JavaScript and drawn using SVG in the browser. 
+This project celebrates the wonderful patterns of the Alhambra. These patterns are calculated with JavaScript and drawn using SVG in the browser.
 
 This was made possible by the analytical work of Manuel Martinez Vela. See his [YouTube channel](https://www.youtube.com/playlist?list=PLHG5uxhiqH9X3a2ryA4rtvRSP-6zDpsJY)
 
@@ -8,7 +8,12 @@ To draw a pattern we first need to calculate the points of the basic shapes. The
 
 In this phase we draw line pieces, circles, and squares to help us find coordinates. These elements are also drawn on the canvas so that we can visually inspect the work for errors. We calculate intersections between them to find the points of the basic shapes. The product of this phase is a basic set of named polygons. The coordinates of the points of the shapes lie in the range [0.0 ... 1.0, 0.0 ... 1.0].
 
+In this phase we need to come up with names for different sorts of shapes.
+
+A "diamond" is a square on its side:
+
+![Diamond](pictures/diamond.png)
+
 ## The drawing phase
 
-When drawing the shapes, they are colored, multiplied, rotated, and moved into place.
-
+When drawing the pattern units, they are colored, multiplied, rotated, and moved into place. The instances of the pattern units need not all look the same. The coloring of different units may be different, for example.

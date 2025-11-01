@@ -30,8 +30,8 @@ export function moveLightWithMouse(light: SVGFESpecularLightingElement, view: SV
         // Keep z constant, or you can vary it for depth effect
         const z = 150;
 
-        light.setAttribute("x", x);
-        light.setAttribute("y", y);
-        light.setAttribute("z", z);
+        light.setAttribute("x", "" + x);
+        light.setAttribute("y", "" + y);
+        light.setAttribute("z", "" + z);
     });
 }

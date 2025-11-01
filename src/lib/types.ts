@@ -24,3 +24,7 @@ export type Diamond = {
 export type Polygon = {
     points: Point[];
 };
+
+export type CoordinateType = "x" | "y" | "abs";
+
+export type projection = (ordinate: number, type: CoordinateType) => number;
