@@ -13,6 +13,11 @@ export type Circle = {
     radius: number;
 };
 
+export type Square = {
+    top: LinePiece;
+    bottom: LinePiece;
+};
+
 // a square on its side
 export type Diamond = {
     top: Point;

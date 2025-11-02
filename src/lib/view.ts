@@ -1,4 +1,4 @@
-import type { Circle, Diamond, LinePiece, Polygon, projection as Projection } from "./types";
+import type { Circle, Diamond, Square, Polygon, projection as Projection, LinePiece } from "./types";
 
 export function drawLinePieces(linePieces: LinePiece[], g: SVGGElement, project: Projection) {
     for (const piece of linePieces) {
@@ -24,6 +24,25 @@ export function drawCircles(circles: Circle[], g: SVGGElement, project: Projecti
         c.setAttribute("stroke-width", "1");
         c.setAttribute("filter", "url(#filter)");
         g.append(c);
+    }
+}
+
+export function drawSquares(squares: Square[], g: SVGGElement, project: Projection) {
+    for (const square of squares) {
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        p.setAttribute(
+            "points",
+            [
+                [project(square.top.a.x, "x"), project(square.top.a.y, "y")].join(","),
+                [project(square.top.b.x, "x"), project(square.top.b.y, "y")].join(","),
+                [project(square.bottom.b.x, "x"), project(square.bottom.b.y, "y")].join(","),
+                [project(square.bottom.a.x, "x"), project(square.bottom.a.y, "y")].join(","),
+            ].join(" ")
+        );
+        p.setAttribute("stroke", "#000000");
+        p.setAttribute("fill", "none");
+        p.setAttribute("stroke-width", "1");
+        g.append(p);
     }
 }
 
