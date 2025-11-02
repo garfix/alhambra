@@ -8,12 +8,35 @@ To draw a pattern we first need to calculate the points of the basic shapes. The
 
 In this phase we draw line pieces, circles, and squares to help us find coordinates. These elements are also drawn on the canvas so that we can visually inspect the work for errors. We calculate intersections between them to find the points of the basic shapes. The product of this phase is a basic set of named polygons. The coordinates of the points of the shapes lie in the range [0.0 ... 1.0, 0.0 ... 1.0].
 
-In this phase we need to come up with names for different sorts of shapes.
+In this phase we draw **figures** and we need to come up with names for different sorts of figures.
 
-A "diamond" is a square on its side:
+> When I use the word "line" I always mean "line piece".
+
+The following figures are implicityly **primary**
+
+-   A **diamond** is a square on its side
 
 ![Diamond](pictures/diamond.png)
+
+-   A **horizontal** is a horizontal line piece
+-   A **vertical** is a vertical line piece
+-   A **descender** is a diagonal from top left to bottom right
+-   An **ascender** is a diagonal from bottom left to top right
+-   A **plus** is formed by a vertical and a horizontal
+-   An **ex** is formed by a descender and an ascender
+
+When two parallel figures (mostly lines) are needed in stead of one
+
+-   A **secondary** figure is formed by 2 lines in each direction, close to the primary
+-   A **tertiary** figure is formed by 2 lines in each direction, a bit farther away from the primary
+-   A **quartiary** figure is formed by 2 lines in each direction, a bit farther away still from the primary
+
+When multiple figured are returned by a function, they are ordered from left to right, them top to bottom.
 
 ## The drawing phase
 
 When drawing the pattern units, they are colored, multiplied, rotated, and moved into place. The instances of the pattern units need not all look the same. The coloring of different units may be different, for example.
+
+## Todo
+
+What would be a good scale for the shapes? Currently the points take on pixel values. Works for now, but maybe not later.

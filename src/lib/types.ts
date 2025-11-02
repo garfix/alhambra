@@ -27,4 +27,5 @@ export type Polygon = {
 
 export type CoordinateType = "x" | "y" | "abs";
 
+/** Project the coordinates that are in the [0..1] range, or in the [-1..1] range to pixels on the canvas */
 export type projection = (ordinate: number, type: CoordinateType) => number;
