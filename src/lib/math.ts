@@ -78,6 +78,18 @@ export function calculateDistance(point1: Point, point2: Point) {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+export function calculateLinePieceCenter(linePiece: LinePiece): Point {
+    const x = (linePiece.a.x + linePiece.b.x) / 2;
+    const y = (linePiece.a.y + linePiece.b.y) / 2;
+    return { x: x, y: y };
+}
+
+export function calculatePointMean(point1: Point, point2: Point): Point {
+    const x = (point2.x + point1.x) / 2;
+    const y = (point2.y + point1.y) / 2;
+    return { x: x, y: y };
+}
+
 // subtract `base` from all points in poly, to make point the new (0, 0)
 export function normalizePolygon(poly: Polygon, base: Point): Polygon {
     return {
