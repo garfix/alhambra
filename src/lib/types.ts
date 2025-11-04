@@ -15,7 +15,9 @@ export type Circle = {
 
 export type Square = {
     top: LinePiece;
+    right: LinePiece;
     bottom: LinePiece;
+    left: LinePiece;
 };
 
 // a square on its side

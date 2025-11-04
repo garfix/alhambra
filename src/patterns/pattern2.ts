@@ -40,7 +40,9 @@ function createExLines(): LinePiece[] {
 function createSquare(): Square {
     return {
         top: { a: { x: -0.5, y: 0.5 }, b: { x: 0.5, y: 0.5 } },
+        left: { a: { x: -0.5, y: 0.5 }, b: { x: -0.5, y: -0.5 } },
         bottom: { a: { x: -0.5, y: -0.5 }, b: { x: 0.5, y: -0.5 } },
+        right: { a: { x: 0.5, y: 0.5 }, b: { x: 0.5, y: -0.5 } },
     };
 }
 
@@ -53,7 +55,9 @@ function createSquareB(exLines: LinePiece[], diamond: Diamond): Square {
 
     return {
         top: { a: topLeft, b: topRight },
+        right: { a: topRight, b: bottomRight },
         bottom: { a: bottomLeft, b: bottomRight },
+        left: { a: bottomLeft, b: topLeft },
     };
 }
 
@@ -73,6 +77,23 @@ function createDiamondB(square: Square): Diamond {
         bottom: calculateLinePieceCenter(square.bottom),
         right: calculatePointMean(square.top.b, square.bottom.b),
     };
+}
+
+function createHorizontals2(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
+    const FAR_AWAY = 1000;
+    const left1 = calculatePiecePieceIntersection({ a: innerDiamond.top, b: innerDiamond.left }, square.left);
+    const tooHor1 = { a: { x: -FAR_AWAY, y: left1.y }, b: { x: FAR_AWAY, y: left1.y } };
+    const leftA = calculatePiecePieceIntersection({ a: outerDiamond.top, b: outerDiamond.left }, tooHor1);
+    const rightA = calculatePiecePieceIntersection({ a: outerDiamond.top, b: outerDiamond.right }, tooHor1);
+
+    const left2 = calculatePiecePieceIntersection({ a: innerDiamond.bottom, b: innerDiamond.left }, square.left);
+    const tooHor2 = { a: { x: -FAR_AWAY, y: left2.y }, b: { x: FAR_AWAY, y: left2.y } };
+    const leftB = calculatePiecePieceIntersection({ a: outerDiamond.bottom, b: outerDiamond.left }, tooHor2);
+    const rightB = calculatePiecePieceIntersection({ a: outerDiamond.bottom, b: outerDiamond.right }, tooHor2);
+    return [
+        { a: leftA, b: rightA },
+        { a: leftB, b: rightB },
+    ];
 }
 
 export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Polygon> {
@@ -99,6 +120,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const diamond3 = createDiamondB(square2);
     const square4 = createSquareB(exLines, diamond3);
     const diamond4 = createDiamondB(square3);
+    const horizontals2 = createHorizontals2(square4, diamond4, diamond);
 
     if (draw) {
         drawLinePieces(plus, g, project);
@@ -112,6 +134,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawDiamonds([diamond3], g, project);
         drawSquares([square4], g, project);
         drawDiamonds([diamond4], g, project);
+        drawLinePieces(horizontals2, g, project);
     }
 
     return {};
