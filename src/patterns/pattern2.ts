@@ -2,6 +2,8 @@ import { calculatePiecePieceIntersection, calculateLinePieceCenter, calculatePoi
 import type { CoordinateType, LinePiece, Polygon, Circle, Square, Diamond } from "../lib/types";
 import { drawCircles, drawDiamonds, drawLinePieces, drawSquares } from "../lib/view";
 
+const FAR_AWAY = 1000;
+
 function createPlusLines(radius: number): LinePiece[] {
     return [
         {
@@ -80,7 +82,6 @@ function createDiamondB(square: Square): Diamond {
 }
 
 function createHorizontals2(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
-    const FAR_AWAY = 1000;
     const left1 = calculatePiecePieceIntersection({ a: innerDiamond.top, b: innerDiamond.left }, square.left);
     const tooHor1 = { a: { x: -FAR_AWAY, y: left1.y }, b: { x: FAR_AWAY, y: left1.y } };
     const leftA = calculatePiecePieceIntersection({ a: outerDiamond.top, b: outerDiamond.left }, tooHor1);
@@ -97,7 +98,6 @@ function createHorizontals2(square: Square, innerDiamond: Diamond, outerDiamond:
 }
 
 function createVerticals2(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
-    const FAR_AWAY = 1000;
     const top1 = calculatePiecePieceIntersection({ a: innerDiamond.left, b: innerDiamond.top }, square.top);
     const tooVer1 = { a: { x: top1.x, y: FAR_AWAY }, b: { x: top1.x, y: -FAR_AWAY } };
     const topA = calculatePiecePieceIntersection({ a: outerDiamond.left, b: outerDiamond.top }, tooVer1);
@@ -107,6 +107,25 @@ function createVerticals2(square: Square, innerDiamond: Diamond, outerDiamond: D
     const tooVer2 = { a: { x: top2.x, y: FAR_AWAY }, b: { x: top2.x, y: -FAR_AWAY } };
     const topB = calculatePiecePieceIntersection({ a: outerDiamond.right, b: outerDiamond.top }, tooVer2);
     const bottomB = calculatePiecePieceIntersection({ a: outerDiamond.right, b: outerDiamond.bottom }, tooVer2);
+    return [
+        { a: topA, b: bottomA },
+        { a: topB, b: bottomB },
+    ];
+}
+
+function createDescenders2(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
+    const top1 = calculatePiecePieceIntersection({ a: innerDiamond.left, b: innerDiamond.top }, square.top);
+    const bottom1 = calculatePiecePieceIntersection({ a: innerDiamond.right, b: innerDiamond.bottom }, square.right);
+    // lijnstuk door deze 2 punten
+    const tooDia1 = { a: { x: top1.x - FAR_AWAY, y: top1.y + FAR_AWAY }, b: { x: bottom1.x + FAR_AWAY, y: bottom1.y - FAR_AWAY } };
+    const topA = calculatePiecePieceIntersection(outerSquare.top, tooDia1);
+    const bottomA = calculatePiecePieceIntersection(outerSquare.right, tooDia1);
+
+    const top2 = calculatePiecePieceIntersection({ a: innerDiamond.left, b: innerDiamond.top }, square.left);
+    const bottom2 = calculatePiecePieceIntersection({ a: innerDiamond.right, b: innerDiamond.bottom }, square.bottom);
+    const tooDia2 = { a: { x: top2.x - FAR_AWAY, y: top2.y + FAR_AWAY }, b: { x: bottom2.x + FAR_AWAY, y: bottom2.y - FAR_AWAY } };
+    const topB = calculatePiecePieceIntersection(outerSquare.left, tooDia2);
+    const bottomB = calculatePiecePieceIntersection(outerSquare.bottom, tooDia2);
     return [
         { a: topA, b: bottomA },
         { a: topB, b: bottomB },
@@ -131,22 +150,23 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const circle = createCircle(radius);
     const exLines = createExLines();
     const square1 = createSquare();
-    const diamond = createDiamond(radius);
-    const square2 = createSquareB(exLines, diamond);
+    const diamond1 = createDiamond(radius);
+    const square2 = createSquareB(exLines, diamond1);
     const diamond2 = createDiamondB(square1);
     const square3 = createSquareB(exLines, diamond2);
     const diamond3 = createDiamondB(square2);
     const square4 = createSquareB(exLines, diamond3);
     const diamond4 = createDiamondB(square3);
-    const horizontals2 = createHorizontals2(square4, diamond4, diamond);
-    const verticals2 = createVerticals2(square4, diamond4, diamond);
+    const horizontals2 = createHorizontals2(square4, diamond4, diamond1);
+    const verticals2 = createVerticals2(square4, diamond4, diamond1);
+    const descenders2 = createDescenders2(square4, diamond4, square1);
 
     if (draw) {
         drawLinePieces(plus, g, project);
         drawCircles([circle], g, project);
         drawLinePieces(exLines, g, project);
         drawSquares([square1], g, project);
-        drawDiamonds([diamond], g, project);
+        drawDiamonds([diamond1], g, project);
         drawSquares([square2], g, project);
         drawDiamonds([diamond2], g, project);
         drawSquares([square3], g, project);
@@ -155,6 +175,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawDiamonds([diamond4], g, project);
         drawLinePieces(horizontals2, g, project);
         drawLinePieces(verticals2, g, project);
+        drawLinePieces(descenders2, g, project);
     }
 
     return {};
