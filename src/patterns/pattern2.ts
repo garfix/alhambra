@@ -149,6 +149,22 @@ function createAscenders2(square: Square, innerDiamond: Diamond, outerSquare: Sq
     ];
 }
 
+/**hor, ver, desc, asc */
+function createCaps(linePiecePairs: LinePiece[][]): LinePiece[] {
+    const caps = [];
+    for (const pair of linePiecePairs) {
+        caps.push({
+            a: pair[0].a,
+            b: pair[1].a,
+        });
+        caps.push({
+            a: pair[0].b,
+            b: pair[1].b,
+        });
+    }
+    return caps;
+}
+
 export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Polygon> {
     const project = (ordinate: number, type: CoordinateType) => {
         const c = 353;
@@ -178,6 +194,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const verticals2 = createVerticals2(square4, diamond4, diamond1);
     const descenders2 = createDescenders2(square4, diamond4, square1);
     const ascenders2 = createAscenders2(square4, diamond4, square1);
+    const caps = createCaps([horizontals2, verticals2, descenders2, ascenders2]);
 
     if (draw) {
         drawLinePieces(plus, g, project);
@@ -195,6 +212,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawLinePieces(verticals2, g, project);
         drawLinePieces(descenders2, g, project);
         drawLinePieces(ascenders2, g, project);
+        drawLinePieces(caps, g, project);
     }
 
     return {};
