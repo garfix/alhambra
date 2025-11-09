@@ -175,8 +175,45 @@ function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[
     ];
 }
 
-function createSecondaryDiamond1Lines(diaomond1: Diamond, secondaryPairs: LinePiece[][], square2: Square): LinePiece[] {
-    return [];
+function createSecondaryDiamond1Lines(diamond1: Diamond, secondaryPairs: LinePiece[][], square2: Square): LinePiece[] {
+    return [
+        // top left
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(square2.top, secondaryPairs[2][0]),
+                b: calculatePiecePieceIntersection(square2.left, secondaryPairs[2][1]),
+            },
+            diamond1.topRight,
+            diamond1.bottomLeft
+        ),
+        // top right
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(square2.top, secondaryPairs[3][0]),
+                b: calculatePiecePieceIntersection(square2.right, secondaryPairs[3][1]),
+            },
+            diamond1.topLeft,
+            diamond1.bottomRight
+        ),
+        // bottom left
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(square2.left, secondaryPairs[3][0]),
+                b: calculatePiecePieceIntersection(square2.bottom, secondaryPairs[3][1]),
+            },
+            diamond1.topLeft,
+            diamond1.bottomRight
+        ),
+        // bottom right
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(square2.right, secondaryPairs[2][0]),
+                b: calculatePiecePieceIntersection(square2.bottom, secondaryPairs[2][1]),
+            },
+            diamond1.topRight,
+            diamond1.bottomLeft
+        ),
+    ];
 }
 
 export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Polygon> {
