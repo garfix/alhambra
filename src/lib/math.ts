@@ -129,3 +129,16 @@ export function rotatePolygon(polygon: Polygon, angle: number, pivot: Point) {
 
     return { points: rotatedPoints };
 }
+
+export function createDiamond(top: Point, left: Point, bottom: Point, right: Point): Diamond {
+    return {
+        top: top,
+        left: left,
+        bottom: bottom,
+        right: right,
+        topLeft: { a: top, b: left },
+        topRight: { a: top, b: right },
+        bottomLeft: { a: bottom, b: left },
+        bottomRight: { a: bottom, b: right },
+    };
+}

@@ -2,6 +2,7 @@ import {
     calculateDistance,
     calculatePieceCircleIntersections,
     calculatePiecePieceIntersection,
+    createDiamond,
     normalizePolygon,
     rotatePolygon,
     translatePolygon,
@@ -93,15 +94,10 @@ function createCircles(radius: number) {
     ];
 }
 
-function createDiamond(circle: Circle, steep: LinePiece, slight: LinePiece): Diamond {
+function createDiamondA(circle: Circle, steep: LinePiece, slight: LinePiece): Diamond {
     const steepPoints = calculatePieceCircleIntersections(steep, circle, "ver");
     const slightPoints = calculatePieceCircleIntersections(slight, circle, "hor");
-    return {
-        top: steepPoints[0],
-        right: slightPoints[1],
-        bottom: steepPoints[1],
-        left: slightPoints[0],
-    };
+    return createDiamond(steepPoints[0], slightPoints[0], steepPoints[1], slightPoints[1]);
 }
 
 function createDiamonds(
@@ -112,10 +108,10 @@ function createDiamonds(
     slightDescs: LinePiece[]
 ): Diamond[] {
     return [
-        createDiamond(circles[0], steepDescs[1], slightAscs[1]),
-        createDiamond(circles[1], steepAscs[1], slightDescs[1]),
-        createDiamond(circles[2], steepAscs[4], slightDescs[4]),
-        createDiamond(circles[3], steepDescs[4], slightAscs[4]),
+        createDiamondA(circles[0], steepDescs[1], slightAscs[1]),
+        createDiamondA(circles[1], steepAscs[1], slightDescs[1]),
+        createDiamondA(circles[2], steepAscs[4], slightDescs[4]),
+        createDiamondA(circles[3], steepDescs[4], slightAscs[4]),
     ];
 }
 

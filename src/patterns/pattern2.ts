@@ -1,4 +1,4 @@
-import { calculatePiecePieceIntersection, calculateLinePieceCenter, calculatePointMean } from "../lib/math";
+import { calculatePiecePieceIntersection, calculateLinePieceCenter, calculatePointMean, createDiamond } from "../lib/math";
 import type { CoordinateType, LinePiece, Polygon, Circle, Square, Diamond, Point } from "../lib/types";
 import { drawCircles, drawDiamonds, drawLinePieces, drawSquares } from "../lib/view";
 
@@ -60,19 +60,6 @@ function createSquareB(exLines: LinePiece[], diamond: Diamond): Square {
         right: { a: topRight, b: bottomRight },
         bottom: { a: bottomLeft, b: bottomRight },
         left: { a: bottomLeft, b: topLeft },
-    };
-}
-
-function createDiamond(top: Point, left: Point, bottom: Point, right: Point): Diamond {
-    return {
-        top: top,
-        left: left,
-        bottom: bottom,
-        right: right,
-        topLeft: { a: top, b: left },
-        topRight: { a: top, b: right },
-        bottomLeft: { a: bottom, b: left },
-        bottomRight: { a: bottom, b: right },
     };
 }
 
@@ -230,7 +217,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawLinePieces(secondaryDescenders, g, project);
         drawLinePieces(secondaryAscenders, g, project);
         drawLinePieces(caps, g, project);
-        drawLinePieces(secondarySquare1, g, project);
+        // drawLinePieces(secondarySquare1, g, project);
     }
 
     return {};
