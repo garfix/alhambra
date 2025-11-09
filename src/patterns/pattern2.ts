@@ -134,12 +134,50 @@ function createCaps(linePiecePairs: LinePiece[][]): LinePiece[] {
     return caps;
 }
 
-function createSecondarySquare1Lines(
-    square: Square,
-    linePiecePairs: LinePiece[][],
-    secondarySquare: Square,
-    secondaryDiamond: Diamond
-): LinePiece[] {}
+function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[][], diamond2: Diamond): LinePiece[] {
+    return [
+        // top
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(diamond2.topLeft, secondaryPairs[1][0]),
+                b: calculatePiecePieceIntersection(diamond2.topRight, secondaryPairs[1][1]),
+            },
+            square1.left,
+            square1.right
+        ),
+        // bottom
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(diamond2.bottomLeft, secondaryPairs[1][0]),
+                b: calculatePiecePieceIntersection(diamond2.bottomRight, secondaryPairs[1][1]),
+            },
+            square1.left,
+            square1.right
+        ),
+        // left
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(diamond2.topLeft, secondaryPairs[0][0]),
+                b: calculatePiecePieceIntersection(diamond2.bottomLeft, secondaryPairs[0][1]),
+            },
+            square1.top,
+            square1.bottom
+        ),
+        // right
+        extendLinePiece(
+            {
+                a: calculatePiecePieceIntersection(diamond2.topRight, secondaryPairs[0][0]),
+                b: calculatePiecePieceIntersection(diamond2.bottomRight, secondaryPairs[0][1]),
+            },
+            square1.top,
+            square1.bottom
+        ),
+    ];
+}
+
+function createSecondaryDiamond1Lines(diaomond1: Diamond, secondaryPairs: LinePiece[][], square2: Square): LinePiece[] {
+    return [];
+}
 
 export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Polygon> {
     const project = (ordinate: number, type: CoordinateType) => {
@@ -172,7 +210,8 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const secondaryAscenders = createSecondaryAscenders(square4, diamond4, square1);
     const secondaryPairs = [secondaryHorizontals, secondaryVerticals, secondaryDescenders, secondaryAscenders];
     const caps = createCaps(secondaryPairs);
-    const secondarySquare1 = createSecondarySquare1Lines(square1, secondaryPairs);
+    const secondarySquare1 = createSecondarySquare1Lines(square1, secondaryPairs, diamond2);
+    const secondaryDiamond1 = createSecondaryDiamond1Lines(diamond1, secondaryPairs, square2);
 
     if (draw) {
         drawLinePieces(plus, g, project);
@@ -191,7 +230,8 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawLinePieces(secondaryDescenders, g, project);
         drawLinePieces(secondaryAscenders, g, project);
         drawLinePieces(caps, g, project);
-        // drawLinePieces(secondarySquare1, g, project);
+        drawLinePieces(secondarySquare1, g, project);
+        drawLinePieces(secondaryDiamond1, g, project);
     }
 
     return {};
