@@ -1,4 +1,4 @@
-import type { Circle, LinePiece, Point, Polygon } from "./types";
+import type { Circle, Diamond, LinePiece, Point, Polygon } from "./types";
 
 export function calculatePiecePieceIntersection(p1: LinePiece, p2: LinePiece): Point {
     // p1, p2 define line 1; p3, p4 define line 2
@@ -141,4 +141,14 @@ export function createDiamond(top: Point, left: Point, bottom: Point, right: Poi
         bottomLeft: { a: bottom, b: left },
         bottomRight: { a: bottom, b: right },
     };
+}
+
+export function extendLinePiece(lineAtoB: LinePiece, extensionA: LinePiece, extensionB: LinePiece): LinePiece {
+    const intersectionA = calculatePiecePieceIntersection(lineAtoB, extensionA);
+    const intersectionB = calculatePiecePieceIntersection(lineAtoB, extensionB);
+
+    //     const tooDia1 = { a: { x: top1.x - FAR_AWAY, y: top1.y + FAR_AWAY }, b: { x: bottom1.x + FAR_AWAY, y: bottom1.y - FAR_AWAY } };
+    // const topA = calculatePiecePieceIntersection(outerSquare.top, tooDia1);
+    // const bottomA = calculatePiecePieceIntersection(outerSquare.right, tooDia1);
+    return { a: intersectionA, b: intersectionB };
 }

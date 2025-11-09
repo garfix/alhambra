@@ -1,8 +1,6 @@
-import { calculatePiecePieceIntersection, calculateLinePieceCenter, calculatePointMean, createDiamond } from "../lib/math";
+import { calculatePiecePieceIntersection, calculateLinePieceCenter, calculatePointMean, createDiamond, extendLinePiece } from "../lib/math";
 import type { CoordinateType, LinePiece, Polygon, Circle, Square, Diamond, Point } from "../lib/types";
 import { drawCircles, drawDiamonds, drawLinePieces, drawSquares } from "../lib/view";
-
-const FAR_AWAY = 1000;
 
 function createPlusLines(radius: number): LinePiece[] {
     return [
@@ -50,10 +48,10 @@ function createSquareA(): Square {
 
 function createSquareB(exLines: LinePiece[], diamond: Diamond): Square {
     const [ascender, descender] = exLines;
-    const topLeft = calculatePiecePieceIntersection(descender, { a: diamond.left, b: diamond.top });
-    const topRight = calculatePiecePieceIntersection(ascender, { a: diamond.top, b: diamond.right });
-    const bottomRight = calculatePiecePieceIntersection(descender, { a: diamond.right, b: diamond.bottom });
-    const bottomLeft = calculatePiecePieceIntersection(ascender, { a: diamond.bottom, b: diamond.left });
+    const topLeft = calculatePiecePieceIntersection(descender, diamond.topLeft);
+    const topRight = calculatePiecePieceIntersection(ascender, diamond.topRight);
+    const bottomRight = calculatePiecePieceIntersection(descender, diamond.bottomRight);
+    const bottomLeft = calculatePiecePieceIntersection(ascender, diamond.bottomLeft);
 
     return {
         top: { a: topLeft, b: topRight },
@@ -78,70 +76,46 @@ function createDiamondB(square: Square): Diamond {
 
 function createSecondaryHorizontals(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
     const left1 = calculatePiecePieceIntersection(innerDiamond.topLeft, square.left);
-    const tooHor1 = { a: { x: -FAR_AWAY, y: left1.y }, b: { x: FAR_AWAY, y: left1.y } };
-    const leftA = calculatePiecePieceIntersection(outerDiamond.topLeft, tooHor1);
-    const rightA = calculatePiecePieceIntersection(outerDiamond.topRight, tooHor1);
+    const right1 = calculatePiecePieceIntersection(innerDiamond.topRight, square.right);
+    const hor1 = extendLinePiece({ a: left1, b: right1 }, outerDiamond.topLeft, outerDiamond.topRight);
 
     const left2 = calculatePiecePieceIntersection(innerDiamond.bottomLeft, square.left);
-    const tooHor2 = { a: { x: -FAR_AWAY, y: left2.y }, b: { x: FAR_AWAY, y: left2.y } };
-    const leftB = calculatePiecePieceIntersection(outerDiamond.bottomLeft, tooHor2);
-    const rightB = calculatePiecePieceIntersection(outerDiamond.bottomRight, tooHor2);
-    return [
-        { a: leftA, b: rightA },
-        { a: leftB, b: rightB },
-    ];
+    const right2 = calculatePiecePieceIntersection(innerDiamond.bottomRight, square.right);
+    const hor2 = extendLinePiece({ a: left2, b: right2 }, outerDiamond.bottomLeft, outerDiamond.bottomRight);
+    return [hor1, hor2];
 }
 
 function createSecondaryVerticals(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
     const top1 = calculatePiecePieceIntersection(innerDiamond.topLeft, square.top);
-    const tooVer1 = { a: { x: top1.x, y: FAR_AWAY }, b: { x: top1.x, y: -FAR_AWAY } };
-    const topA = calculatePiecePieceIntersection(outerDiamond.topLeft, tooVer1);
-    const bottomA = calculatePiecePieceIntersection(outerDiamond.bottomLeft, tooVer1);
+    const bottom1 = calculatePiecePieceIntersection(innerDiamond.bottomLeft, square.bottom);
+    const ver1 = extendLinePiece({ a: top1, b: bottom1 }, outerDiamond.topLeft, outerDiamond.bottomLeft);
 
     const top2 = calculatePiecePieceIntersection(innerDiamond.topRight, square.top);
-    const tooVer2 = { a: { x: top2.x, y: FAR_AWAY }, b: { x: top2.x, y: -FAR_AWAY } };
-    const topB = calculatePiecePieceIntersection(outerDiamond.topRight, tooVer2);
-    const bottomB = calculatePiecePieceIntersection(outerDiamond.bottomRight, tooVer2);
-    return [
-        { a: topA, b: bottomA },
-        { a: topB, b: bottomB },
-    ];
+    const bottom2 = calculatePiecePieceIntersection(innerDiamond.bottomRight, square.bottom);
+    const ver2 = extendLinePiece({ a: top2, b: bottom2 }, outerDiamond.topRight, outerDiamond.bottomRight);
+    return [ver1, ver2];
 }
 
 function createSecondaryDescenders(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
     const top1 = calculatePiecePieceIntersection(innerDiamond.topLeft, square.top);
     const bottom1 = calculatePiecePieceIntersection(innerDiamond.bottomRight, square.right);
-    const tooDia1 = { a: { x: top1.x - FAR_AWAY, y: top1.y + FAR_AWAY }, b: { x: bottom1.x + FAR_AWAY, y: bottom1.y - FAR_AWAY } };
-    const topA = calculatePiecePieceIntersection(outerSquare.top, tooDia1);
-    const bottomA = calculatePiecePieceIntersection(outerSquare.right, tooDia1);
+    const desc1 = extendLinePiece({ a: top1, b: bottom1 }, outerSquare.top, outerSquare.right);
 
     const top2 = calculatePiecePieceIntersection(innerDiamond.topLeft, square.left);
     const bottom2 = calculatePiecePieceIntersection(innerDiamond.bottomRight, square.bottom);
-    const tooDia2 = { a: { x: top2.x - FAR_AWAY, y: top2.y + FAR_AWAY }, b: { x: bottom2.x + FAR_AWAY, y: bottom2.y - FAR_AWAY } };
-    const topB = calculatePiecePieceIntersection(outerSquare.left, tooDia2);
-    const bottomB = calculatePiecePieceIntersection(outerSquare.bottom, tooDia2);
-    return [
-        { a: topA, b: bottomA },
-        { a: topB, b: bottomB },
-    ];
+    const desc2 = extendLinePiece({ a: top2, b: bottom2 }, outerSquare.left, outerSquare.bottom);
+    return [desc1, desc2];
 }
 
 function createSecondaryAscenders(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
     const top1 = calculatePiecePieceIntersection(innerDiamond.topRight, square.top);
     const bottom1 = calculatePiecePieceIntersection(innerDiamond.bottomLeft, square.left);
-    const tooDia1 = { a: { x: top1.x - FAR_AWAY, y: top1.y - FAR_AWAY }, b: { x: bottom1.x + FAR_AWAY, y: bottom1.y + FAR_AWAY } };
-    const topA = calculatePiecePieceIntersection(outerSquare.top, tooDia1);
-    const bottomA = calculatePiecePieceIntersection(outerSquare.left, tooDia1);
+    const asc1 = extendLinePiece({ a: top1, b: bottom1 }, outerSquare.top, outerSquare.left);
 
     const top2 = calculatePiecePieceIntersection(innerDiamond.topRight, square.right);
     const bottom2 = calculatePiecePieceIntersection(innerDiamond.bottomLeft, square.bottom);
-    const tooDia2 = { a: { x: top2.x - FAR_AWAY, y: top2.y - FAR_AWAY }, b: { x: bottom2.x + FAR_AWAY, y: bottom2.y + FAR_AWAY } };
-    const topB = calculatePiecePieceIntersection(outerSquare.right, tooDia2);
-    const bottomB = calculatePiecePieceIntersection(outerSquare.bottom, tooDia2);
-    return [
-        { a: topA, b: bottomA },
-        { a: topB, b: bottomB },
-    ];
+    const asc2 = extendLinePiece({ a: top2, b: bottom2 }, outerSquare.right, outerSquare.bottom);
+    return [asc1, asc2];
 }
 
 /** hor, ver, desc, asc */
