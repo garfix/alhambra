@@ -26,6 +26,10 @@ export type Diamond = {
     right: Point;
     bottom: Point;
     left: Point;
+    topLeft: LinePiece;
+    topRight: LinePiece;
+    bottomLeft: LinePiece;
+    bottomRight: LinePiece;
 };
 
 export type Polygon = {
