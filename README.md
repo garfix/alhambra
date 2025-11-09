@@ -12,9 +12,12 @@ In this phase we draw **figures** and we need to come up with names for differen
 
 > When I use the word "line" I always mean "line piece".
 
-The following figures are implicityly **primary**
+The following figures are implicitly **primary**
 
--   A **diamond** is a square on its side
+-   A **line piece** is the piece of a line between points A and B
+-   A **circle** is a circle with a center and a radius
+-   A **square** is a square with horizontal and vertical line pieces
+-   A **diamond** is a square on its side, but defined by its top, bottom, left and right
 
 ![Diamond](pictures/diamond.png)
 
@@ -24,6 +27,8 @@ The following figures are implicityly **primary**
 -   An **ascender** is a diagonal from bottom left to top right
 -   A **plus** is formed by a vertical and a horizontal
 -   An **ex** is formed by a descender and an ascender
+
+When there are multiple nested squares and diamonds, these are numbered 1, 2, 3, ..., starting with the biggest one.
 
 When two parallel figures (mostly lines) are needed in stead of one
 

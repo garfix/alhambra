@@ -39,7 +39,7 @@ function createExLines(): LinePiece[] {
     ];
 }
 
-function createSquare(): Square {
+function createSquareA(): Square {
     return {
         top: { a: { x: -0.5, y: 0.5 }, b: { x: 0.5, y: 0.5 } },
         left: { a: { x: -0.5, y: 0.5 }, b: { x: -0.5, y: -0.5 } },
@@ -63,7 +63,7 @@ function createSquareB(exLines: LinePiece[], diamond: Diamond): Square {
     };
 }
 
-function createDiamond(r: number): Diamond {
+function createDiamondA(r: number): Diamond {
     return {
         top: { x: 0, y: r },
         left: { x: -r, y: 0 },
@@ -81,7 +81,7 @@ function createDiamondB(square: Square): Diamond {
     };
 }
 
-function createHorizontals2(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
+function createSecondaryHorizontals(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
     const left1 = calculatePiecePieceIntersection({ a: innerDiamond.top, b: innerDiamond.left }, square.left);
     const tooHor1 = { a: { x: -FAR_AWAY, y: left1.y }, b: { x: FAR_AWAY, y: left1.y } };
     const leftA = calculatePiecePieceIntersection({ a: outerDiamond.top, b: outerDiamond.left }, tooHor1);
@@ -97,7 +97,7 @@ function createHorizontals2(square: Square, innerDiamond: Diamond, outerDiamond:
     ];
 }
 
-function createVerticals2(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
+function createSecondaryVerticals(square: Square, innerDiamond: Diamond, outerDiamond: Diamond): LinePiece[] {
     const top1 = calculatePiecePieceIntersection({ a: innerDiamond.left, b: innerDiamond.top }, square.top);
     const tooVer1 = { a: { x: top1.x, y: FAR_AWAY }, b: { x: top1.x, y: -FAR_AWAY } };
     const topA = calculatePiecePieceIntersection({ a: outerDiamond.left, b: outerDiamond.top }, tooVer1);
@@ -113,7 +113,7 @@ function createVerticals2(square: Square, innerDiamond: Diamond, outerDiamond: D
     ];
 }
 
-function createDescenders2(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
+function createSecondaryDescenders(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
     const top1 = calculatePiecePieceIntersection({ a: innerDiamond.left, b: innerDiamond.top }, square.top);
     const bottom1 = calculatePiecePieceIntersection({ a: innerDiamond.right, b: innerDiamond.bottom }, square.right);
     const tooDia1 = { a: { x: top1.x - FAR_AWAY, y: top1.y + FAR_AWAY }, b: { x: bottom1.x + FAR_AWAY, y: bottom1.y - FAR_AWAY } };
@@ -131,7 +131,7 @@ function createDescenders2(square: Square, innerDiamond: Diamond, outerSquare: S
     ];
 }
 
-function createAscenders2(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
+function createSecondaryAscenders(square: Square, innerDiamond: Diamond, outerSquare: Square): LinePiece[] {
     const top1 = calculatePiecePieceIntersection({ a: innerDiamond.right, b: innerDiamond.top }, square.top);
     const bottom1 = calculatePiecePieceIntersection({ a: innerDiamond.left, b: innerDiamond.bottom }, square.left);
     const tooDia1 = { a: { x: top1.x - FAR_AWAY, y: top1.y - FAR_AWAY }, b: { x: bottom1.x + FAR_AWAY, y: bottom1.y + FAR_AWAY } };
@@ -181,25 +181,25 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const radius = Math.sqrt(0.5 * 0.5 + 0.5 * 0.5);
     const plus = createPlusLines(radius);
     const circle = createCircle(radius);
-    const exLines = createExLines();
-    const square1 = createSquare();
-    const diamond1 = createDiamond(radius);
-    const square2 = createSquareB(exLines, diamond1);
+    const ex = createExLines();
+    const square1 = createSquareA();
+    const diamond1 = createDiamondA(radius);
+    const square2 = createSquareB(ex, diamond1);
     const diamond2 = createDiamondB(square1);
-    const square3 = createSquareB(exLines, diamond2);
+    const square3 = createSquareB(ex, diamond2);
     const diamond3 = createDiamondB(square2);
-    const square4 = createSquareB(exLines, diamond3);
+    const square4 = createSquareB(ex, diamond3);
     const diamond4 = createDiamondB(square3);
-    const horizontals2 = createHorizontals2(square4, diamond4, diamond1);
-    const verticals2 = createVerticals2(square4, diamond4, diamond1);
-    const descenders2 = createDescenders2(square4, diamond4, square1);
-    const ascenders2 = createAscenders2(square4, diamond4, square1);
+    const horizontals2 = createSecondaryHorizontals(square4, diamond4, diamond1);
+    const verticals2 = createSecondaryVerticals(square4, diamond4, diamond1);
+    const descenders2 = createSecondaryDescenders(square4, diamond4, square1);
+    const ascenders2 = createSecondaryAscenders(square4, diamond4, square1);
     const caps = createCaps([horizontals2, verticals2, descenders2, ascenders2]);
 
     if (draw) {
         drawLinePieces(plus, g, project);
         drawCircles([circle], g, project);
-        drawLinePieces(exLines, g, project);
+        drawLinePieces(ex, g, project);
         drawSquares([square1], g, project);
         drawDiamonds([diamond1], g, project);
         drawSquares([square2], g, project);
