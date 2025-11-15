@@ -1,5 +1,5 @@
 import { calculatePiecePieceIntersection, calculateLinePieceCenter, calculatePointMean, createDiamond, extendLinePiece } from "../lib/math";
-import type { CoordinateType, LinePiece, Polygon, Circle, Square, Diamond, Point } from "../lib/types";
+import type { CoordinateType, LinePiece, Polygon, Circle, Square, Diamond, Point, DirectedPieces } from "../lib/types";
 import { drawCircles, drawDiamonds, drawLinePieces, drawSquares } from "../lib/view";
 
 function createPlusLines(radius: number): LinePiece[] {
@@ -119,9 +119,9 @@ function createSecondaryAscenders(square: Square, innerDiamond: Diamond, outerSq
 }
 
 /** hor, ver, desc, asc */
-function createCaps(linePiecePairs: LinePiece[][]): LinePiece[] {
+function createCaps(linePiecePairs: DirectedPieces): LinePiece[] {
     const caps = [];
-    for (const pair of linePiecePairs) {
+    for (const pair of Object.values(linePiecePairs)) {
         caps.push({
             a: pair[0].a,
             b: pair[1].a,
@@ -134,13 +134,13 @@ function createCaps(linePiecePairs: LinePiece[][]): LinePiece[] {
     return caps;
 }
 
-function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[][], diamond2: Diamond): LinePiece[] {
+function createSecondarySquare1Lines(square1: Square, secondaryPairs: DirectedPieces, diamond2: Diamond): LinePiece[] {
     return [
         // top
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(diamond2.topLeft, secondaryPairs[1][0]),
-                b: calculatePiecePieceIntersection(diamond2.topRight, secondaryPairs[1][1]),
+                a: calculatePiecePieceIntersection(diamond2.topLeft, secondaryPairs.ver[0]),
+                b: calculatePiecePieceIntersection(diamond2.topRight, secondaryPairs.ver[1]),
             },
             square1.left,
             square1.right
@@ -148,8 +148,8 @@ function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[
         // bottom
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(diamond2.bottomLeft, secondaryPairs[1][0]),
-                b: calculatePiecePieceIntersection(diamond2.bottomRight, secondaryPairs[1][1]),
+                a: calculatePiecePieceIntersection(diamond2.bottomLeft, secondaryPairs.ver[0]),
+                b: calculatePiecePieceIntersection(diamond2.bottomRight, secondaryPairs.ver[1]),
             },
             square1.left,
             square1.right
@@ -157,8 +157,8 @@ function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[
         // left
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(diamond2.topLeft, secondaryPairs[0][0]),
-                b: calculatePiecePieceIntersection(diamond2.bottomLeft, secondaryPairs[0][1]),
+                a: calculatePiecePieceIntersection(diamond2.topLeft, secondaryPairs.hor[0]),
+                b: calculatePiecePieceIntersection(diamond2.bottomLeft, secondaryPairs.hor[1]),
             },
             square1.top,
             square1.bottom
@@ -166,8 +166,8 @@ function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[
         // right
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(diamond2.topRight, secondaryPairs[0][0]),
-                b: calculatePiecePieceIntersection(diamond2.bottomRight, secondaryPairs[0][1]),
+                a: calculatePiecePieceIntersection(diamond2.topRight, secondaryPairs.hor[0]),
+                b: calculatePiecePieceIntersection(diamond2.bottomRight, secondaryPairs.hor[1]),
             },
             square1.top,
             square1.bottom
@@ -175,13 +175,13 @@ function createSecondarySquare1Lines(square1: Square, secondaryPairs: LinePiece[
     ];
 }
 
-function createSecondaryDiamond1Lines(diamond1: Diamond, secondaryPairs: LinePiece[][], square2: Square): LinePiece[] {
+function createSecondaryDiamond1Lines(diamond1: Diamond, secondaryPairs: DirectedPieces, square2: Square): LinePiece[] {
     return [
         // top left
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(square2.top, secondaryPairs[2][0]),
-                b: calculatePiecePieceIntersection(square2.left, secondaryPairs[2][1]),
+                a: calculatePiecePieceIntersection(square2.top, secondaryPairs.desc[0]),
+                b: calculatePiecePieceIntersection(square2.left, secondaryPairs.desc[1]),
             },
             diamond1.topRight,
             diamond1.bottomLeft
@@ -189,8 +189,8 @@ function createSecondaryDiamond1Lines(diamond1: Diamond, secondaryPairs: LinePie
         // top right
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(square2.top, secondaryPairs[3][0]),
-                b: calculatePiecePieceIntersection(square2.right, secondaryPairs[3][1]),
+                a: calculatePiecePieceIntersection(square2.top, secondaryPairs.asc[0]),
+                b: calculatePiecePieceIntersection(square2.right, secondaryPairs.asc[1]),
             },
             diamond1.topLeft,
             diamond1.bottomRight
@@ -198,8 +198,8 @@ function createSecondaryDiamond1Lines(diamond1: Diamond, secondaryPairs: LinePie
         // bottom left
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(square2.left, secondaryPairs[3][0]),
-                b: calculatePiecePieceIntersection(square2.bottom, secondaryPairs[3][1]),
+                a: calculatePiecePieceIntersection(square2.left, secondaryPairs.asc[0]),
+                b: calculatePiecePieceIntersection(square2.bottom, secondaryPairs.asc[1]),
             },
             diamond1.topLeft,
             diamond1.bottomRight
@@ -207,12 +207,42 @@ function createSecondaryDiamond1Lines(diamond1: Diamond, secondaryPairs: LinePie
         // bottom right
         extendLinePiece(
             {
-                a: calculatePiecePieceIntersection(square2.right, secondaryPairs[2][0]),
-                b: calculatePiecePieceIntersection(square2.bottom, secondaryPairs[2][1]),
+                a: calculatePiecePieceIntersection(square2.right, secondaryPairs.desc[0]),
+                b: calculatePiecePieceIntersection(square2.bottom, secondaryPairs.desc[1]),
             },
             diamond1.topRight,
             diamond1.bottomLeft
         ),
+    ];
+}
+
+function createStitches(
+    secondaryPairs: DirectedPieces,
+    innerSquare: Square,
+    innerDiamond: Diamond,
+    outerSquare: Square,
+    outerDiamond: Diamond
+): LinePiece[] {
+    return [
+        // top
+        {
+            a: calculatePiecePieceIntersection(outerSquare.top, secondaryPairs.ver[0]),
+            b: calculatePiecePieceIntersection(innerSquare.top, secondaryPairs.desc[0]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerSquare.top, secondaryPairs.ver[1]),
+            b: calculatePiecePieceIntersection(innerSquare.top, secondaryPairs.asc[0]),
+        },
+        // top right
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.topRight, secondaryPairs.asc[0]),
+            b: calculatePiecePieceIntersection(innerDiamond.topRight, secondaryPairs.ver[1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.topRight, secondaryPairs.asc[1]),
+            b: calculatePiecePieceIntersection(innerDiamond.topRight, secondaryPairs.hor[0]),
+        },
+        // right
     ];
 }
 
@@ -245,10 +275,11 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const secondaryVerticals = createSecondaryVerticals(square4, diamond4, diamond1);
     const secondaryDescenders = createSecondaryDescenders(square4, diamond4, square1);
     const secondaryAscenders = createSecondaryAscenders(square4, diamond4, square1);
-    const secondaryPairs = [secondaryHorizontals, secondaryVerticals, secondaryDescenders, secondaryAscenders];
+    const secondaryPairs = { hor: secondaryHorizontals, ver: secondaryVerticals, desc: secondaryDescenders, asc: secondaryAscenders };
     const caps = createCaps(secondaryPairs);
     const secondarySquare1 = createSecondarySquare1Lines(square1, secondaryPairs, diamond2);
     const secondaryDiamond1 = createSecondaryDiamond1Lines(diamond1, secondaryPairs, square2);
+    const stiches = createStitches(secondaryPairs, square3, diamond3, square1, diamond1);
 
     if (draw) {
         drawLinePieces(plus, g, project);
@@ -269,6 +300,7 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawLinePieces(caps, g, project);
         drawLinePieces(secondarySquare1, g, project);
         drawLinePieces(secondaryDiamond1, g, project);
+        drawLinePieces(stiches, g, project);
     }
 
     return {};
