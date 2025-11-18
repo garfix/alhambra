@@ -243,6 +243,59 @@ function createStitches(
             b: calculatePiecePieceIntersection(innerDiamond.topRight, secondaryPairs.hor[0]),
         },
         // right
+        {
+            a: calculatePiecePieceIntersection(outerSquare.right, secondaryPairs.hor[0]),
+            b: calculatePiecePieceIntersection(innerSquare.right, secondaryPairs.asc[1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerSquare.right, secondaryPairs.hor[1]),
+            b: calculatePiecePieceIntersection(innerSquare.right, secondaryPairs.desc[0]),
+        },
+        // bottom right
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.bottomRight, secondaryPairs.desc[0]),
+            b: calculatePiecePieceIntersection(innerDiamond.bottomRight, secondaryPairs.hor[1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.bottomRight, secondaryPairs.desc[1]),
+            b: calculatePiecePieceIntersection(innerDiamond.bottomRight, secondaryPairs.ver[1]),
+        },
+        // bottom
+        {
+            a: calculatePiecePieceIntersection(outerSquare.bottom, secondaryPairs.ver[1]),
+            b: calculatePiecePieceIntersection(innerSquare.bottom, secondaryPairs.desc[1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerSquare.bottom, secondaryPairs.ver[0]),
+            b: calculatePiecePieceIntersection(innerSquare.bottom, secondaryPairs.asc[1]),
+        },
+        // bottom left
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.bottomLeft, secondaryPairs.asc[1]),
+            b: calculatePiecePieceIntersection(innerDiamond.bottomLeft, secondaryPairs.ver[0]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.bottomLeft, secondaryPairs.asc[0]),
+            b: calculatePiecePieceIntersection(innerDiamond.bottomLeft, secondaryPairs.hor[1]),
+        },
+        // left
+        {
+            a: calculatePiecePieceIntersection(outerSquare.left, secondaryPairs.hor[1]),
+            b: calculatePiecePieceIntersection(innerSquare.left, secondaryPairs.asc[0]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerSquare.left, secondaryPairs.hor[0]),
+            b: calculatePiecePieceIntersection(innerSquare.left, secondaryPairs.desc[1]),
+        },
+        // top left
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.topLeft, secondaryPairs.desc[1]),
+            b: calculatePiecePieceIntersection(innerDiamond.topLeft, secondaryPairs.hor[0]),
+        },
+        {
+            a: calculatePiecePieceIntersection(outerDiamond.topLeft, secondaryPairs.desc[0]),
+            b: calculatePiecePieceIntersection(innerDiamond.topLeft, secondaryPairs.ver[0]),
+        },
     ];
 }
 
