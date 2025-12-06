@@ -119,18 +119,24 @@ function createSecondaryAscenders(square: Square, innerDiamond: Diamond, outerSq
 }
 
 /** hor, ver, desc, asc */
-function createCaps(linePiecePairs: DirectedPieces): LinePiece[] {
-    const caps = [];
-    for (const pair of Object.values(linePiecePairs)) {
-        caps.push({
-            a: pair[0].a,
-            b: pair[1].a,
-        });
-        caps.push({
-            a: pair[0].b,
-            b: pair[1].b,
-        });
-    }
+function createCaps(linePiecePairs: DirectedPieces): DirectedPieces {
+    const caps = Object.fromEntries(
+        Object.entries(linePiecePairs).map(([key, pair]) => {
+            return [
+                key,
+                [
+                    {
+                        a: pair[0].a,
+                        b: pair[1].a,
+                    },
+                    {
+                        a: pair[0].b,
+                        b: pair[1].b,
+                    },
+                ],
+            ];
+        })
+    ) as DirectedPieces;
     return caps;
 }
 
@@ -299,6 +305,47 @@ function createStitches(
     ];
 }
 
+function createTertiaryHorizontals(caps: DirectedPieces, squareLines: LinePiece[], diamondLines: LinePiece[]) {
+    return [
+        // horizontal
+        {
+            a: calculatePiecePieceIntersection(caps.hor[0], diamondLines[2]),
+            b: calculatePiecePieceIntersection(caps.hor[1], diamondLines[3]),
+        },
+        {
+            a: calculatePiecePieceIntersection(caps.hor[0], diamondLines[0]),
+            b: calculatePiecePieceIntersection(caps.hor[1], diamondLines[1]),
+        },
+        // vertical
+        {
+            a: calculatePiecePieceIntersection(caps.ver[0], diamondLines[1]),
+            b: calculatePiecePieceIntersection(caps.ver[1], diamondLines[3]),
+        },
+        {
+            a: calculatePiecePieceIntersection(caps.ver[0], diamondLines[0]),
+            b: calculatePiecePieceIntersection(caps.ver[1], diamondLines[2]),
+        },
+        // descending
+        {
+            a: calculatePiecePieceIntersection(caps.desc[0], squareLines[2]),
+            b: calculatePiecePieceIntersection(caps.desc[1], squareLines[1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(caps.desc[0], squareLines[0]),
+            b: calculatePiecePieceIntersection(caps.desc[1], squareLines[3]),
+        },
+        // ascending
+        {
+            a: calculatePiecePieceIntersection(caps.asc[1], squareLines[1]),
+            b: calculatePiecePieceIntersection(caps.asc[0], squareLines[3]),
+        },
+        {
+            a: calculatePiecePieceIntersection(caps.asc[1], squareLines[2]),
+            b: calculatePiecePieceIntersection(caps.asc[0], squareLines[0]),
+        },
+    ];
+}
+
 export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Polygon> {
     const project = (ordinate: number, type: CoordinateType) => {
         const c = 353;
@@ -332,7 +379,8 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const caps = createCaps(secondaryPairs);
     const secondarySquare1 = createSecondarySquare1Lines(square1, secondaryPairs, diamond2);
     const secondaryDiamond1 = createSecondaryDiamond1Lines(diamond1, secondaryPairs, square2);
-    const stiches = createStitches(secondaryPairs, square3, diamond3, square1, diamond1);
+    const stitches = createStitches(secondaryPairs, square3, diamond3, square1, diamond1);
+    const tertiaryHorizontals = createTertiaryHorizontals(caps, secondarySquare1, secondaryDiamond1);
 
     if (draw) {
         drawLinePieces(plus, g, project);
@@ -350,10 +398,13 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawLinePieces(secondaryVerticals, g, project);
         drawLinePieces(secondaryDescenders, g, project);
         drawLinePieces(secondaryAscenders, g, project);
-        drawLinePieces(caps, g, project);
+        for (const pairs of Object.values(caps)) {
+            drawLinePieces(pairs, g, project);
+        }
         drawLinePieces(secondarySquare1, g, project);
         drawLinePieces(secondaryDiamond1, g, project);
-        drawLinePieces(stiches, g, project);
+        drawLinePieces(stitches, g, project);
+        drawLinePieces(tertiaryHorizontals, g, project);
     }
 
     return {};
