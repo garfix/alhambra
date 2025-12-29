@@ -305,7 +305,7 @@ function createStitches(
     ];
 }
 
-function createTertiaryHorizontals(caps: DirectedPieces, squareLines: LinePiece[], diamondLines: LinePiece[]) {
+function createTertiaryLines(caps: DirectedPieces, squareLines: LinePiece[], diamondLines: LinePiece[]) {
     return [
         // horizontal
         {
@@ -346,6 +346,89 @@ function createTertiaryHorizontals(caps: DirectedPieces, squareLines: LinePiece[
     ];
 }
 
+function createCrosses(
+    tertiaryLines: LinePiece[],
+    secondarySquare1: LinePiece[],
+    square2: Square,
+    secondaryDiamond1: LinePiece[],
+    diamond2: Diamond
+): LinePiece[] {
+    return [
+        // top
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[0], tertiaryLines[1 * 2 + 0]),
+            b: calculatePiecePieceIntersection(square2.top, tertiaryLines[1 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[0], tertiaryLines[1 * 2 + 1]),
+            b: calculatePiecePieceIntersection(square2.top, tertiaryLines[1 * 2 + 0]),
+        },
+        // top right
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[1], tertiaryLines[3 * 2 + 0]),
+            b: calculatePiecePieceIntersection(diamond2.topRight, tertiaryLines[3 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[1], tertiaryLines[3 * 2 + 1]),
+            b: calculatePiecePieceIntersection(diamond2.topRight, tertiaryLines[3 * 2 + 0]),
+        },
+        // right
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[3], tertiaryLines[0 * 2 + 0]),
+            b: calculatePiecePieceIntersection(square2.right, tertiaryLines[0 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[3], tertiaryLines[0 * 2 + 1]),
+            b: calculatePiecePieceIntersection(square2.right, tertiaryLines[0 * 2 + 0]),
+        },
+        // bottom right
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[3], tertiaryLines[2 * 2 + 0]),
+            b: calculatePiecePieceIntersection(diamond2.bottomRight, tertiaryLines[2 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[3], tertiaryLines[2 * 2 + 1]),
+            b: calculatePiecePieceIntersection(diamond2.bottomRight, tertiaryLines[2 * 2 + 0]),
+        },
+        // bottom
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[1], tertiaryLines[1 * 2 + 0]),
+            b: calculatePiecePieceIntersection(square2.bottom, tertiaryLines[1 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[1], tertiaryLines[1 * 2 + 1]),
+            b: calculatePiecePieceIntersection(square2.bottom, tertiaryLines[1 * 2 + 0]),
+        },
+        // // bottom left
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[2], tertiaryLines[3 * 2 + 0]),
+            b: calculatePiecePieceIntersection(diamond2.bottomLeft, tertiaryLines[3 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[2], tertiaryLines[3 * 2 + 1]),
+            b: calculatePiecePieceIntersection(diamond2.bottomLeft, tertiaryLines[3 * 2 + 0]),
+        },
+        // left
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[2], tertiaryLines[0 * 2 + 0]),
+            b: calculatePiecePieceIntersection(square2.left, tertiaryLines[0 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondarySquare1[2], tertiaryLines[0 * 2 + 1]),
+            b: calculatePiecePieceIntersection(square2.left, tertiaryLines[0 * 2 + 0]),
+        },
+        // top left
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[0], tertiaryLines[2 * 2 + 0]),
+            b: calculatePiecePieceIntersection(diamond2.topLeft, tertiaryLines[2 * 2 + 1]),
+        },
+        {
+            a: calculatePiecePieceIntersection(secondaryDiamond1[0], tertiaryLines[2 * 2 + 1]),
+            b: calculatePiecePieceIntersection(diamond2.topLeft, tertiaryLines[2 * 2 + 0]),
+        },
+    ];
+}
+
 export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Polygon> {
     const project = (ordinate: number, type: CoordinateType) => {
         const c = 353;
@@ -380,7 +463,8 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
     const secondarySquare1 = createSecondarySquare1Lines(square1, secondaryPairs, diamond2);
     const secondaryDiamond1 = createSecondaryDiamond1Lines(diamond1, secondaryPairs, square2);
     const stitches = createStitches(secondaryPairs, square3, diamond3, square1, diamond1);
-    const tertiaryHorizontals = createTertiaryHorizontals(caps, secondarySquare1, secondaryDiamond1);
+    const tertiaryLines = createTertiaryLines(caps, secondarySquare1, secondaryDiamond1);
+    const crosses = createCrosses(tertiaryLines, secondarySquare1, square2, secondaryDiamond1, diamond2);
 
     if (draw) {
         drawLinePieces(plus, g, project);
@@ -404,7 +488,8 @@ export function designShapes2(g: SVGGElement, draw: boolean): Record<string, Pol
         drawLinePieces(secondarySquare1, g, project);
         drawLinePieces(secondaryDiamond1, g, project);
         drawLinePieces(stitches, g, project);
-        drawLinePieces(tertiaryHorizontals, g, project);
+        drawLinePieces(tertiaryLines, g, project);
+        drawLinePieces(crosses, g, project);
     }
 
     return {};
